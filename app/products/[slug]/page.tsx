@@ -97,13 +97,14 @@ const ProductPage = ({ params }: ProductPageProps) => {
 
              <p className="mt-4 font-body text-small text-ink/50">Category: {product.category}</p>
 
-             <div className="mt-6">
-              <VariantSelector
-                shapes={product.shapes}
-                sizes={product.sizes}
-                variants={product.variants}
-              />
-            </div>
+              <div className="mt-6">
+               <VariantSelector
+                 shapes={product.shapes}
+                 sizes={product.sizes}
+                 variants={product.variants}
+                 product={product}
+               />
+             </div>
           </div>
         </div>
       </div>

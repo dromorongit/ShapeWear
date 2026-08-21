@@ -2,23 +2,33 @@
 
 import { useState } from 'react'
 import Badge from '@/components/ui/Badge'
+import { useCart } from '@/context/CartContext'
 import { ProductVariant } from '@/lib/mockProducts'
 
 interface VariantSelectorProps {
   shapes: string[]
   sizes: string[]
   variants: ProductVariant[]
+  product?: {
+    id: string
+    slug: string
+    name: string
+    mainImage: string
+    price: number
+    salePrice: number | null
+  }
 }
 
 type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock'
 
-const VariantSelector = ({ shapes, sizes, variants }: VariantSelectorProps) => {
+const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorProps) => {
   const firstInStockVariant = variants.find((v) => v.stock > 0)
   const defaultShape = firstInStockVariant?.shape ?? shapes[0] ?? ''
   const defaultSize = firstInStockVariant?.size ?? sizes[0] ?? ''
   const [selectedShape, setSelectedShape] = useState<string>(defaultShape)
   const [selectedSize, setSelectedSize] = useState<string>(defaultSize)
   const [cartMessage, setCartMessage] = useState<string | null>(null)
+  const { addItem } = useCart()
 
   const variantMap = new Map<string, ProductVariant>()
   variants.forEach((v) => {
@@ -40,8 +50,18 @@ const VariantSelector = ({ shapes, sizes, variants }: VariantSelectorProps) => {
   const isLowStock = currentStatus === 'low-stock'
 
   const handleAddToCart = () => {
-    if (isOutOfStock || !currentVariant) return
-    setCartMessage(`Added ${selectedShape} / ${selectedSize} to cart (mock)`)
+    if (isOutOfStock || !currentVariant || !product) return
+    addItem({
+      productId: product.id,
+      slug: product.slug,
+      name: product.name,
+      mainImage: product.mainImage,
+      shape: selectedShape,
+      size: selectedSize,
+      sku: currentVariant.sku,
+      price: product.salePrice ?? product.price,
+    })
+    setCartMessage(`Added ${selectedShape} / ${selectedSize} to cart`)
     setTimeout(() => setCartMessage(null), 3000)
   }
 

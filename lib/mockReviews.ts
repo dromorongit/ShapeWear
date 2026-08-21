@@ -4,7 +4,7 @@ export interface MockReview {
   reviewerName: string
   rating: 1 | 2 | 3 | 4 | 5
   comment: string
-  status: 'approved' | 'pending'
+  status: 'approved' | 'pending' | 'rejected'
   createdAt: string
 }
 
@@ -62,5 +62,32 @@ export const mockReviews: MockReview[] = [
     comment: 'Authentic faja feel with the quality you expect. Compression is strong but the cotton lining keeps it breathable.',
     status: 'approved',
     createdAt: '2026-07-30',
+  },
+  {
+    id: '7',
+    productId: '2',
+    reviewerName: 'Esi T.',
+    rating: 3,
+    comment: 'Good compression overall but the straps feel a bit flimsy compared to my other bodysuit.',
+    status: 'pending',
+    createdAt: '2026-08-18',
+  },
+  {
+    id: '8',
+    productId: '4',
+    reviewerName: 'Adwoa K.',
+    rating: 4,
+    comment: 'Love the fit and lift. Sizing runs slightly small so I recommend going up one size.',
+    status: 'pending',
+    createdAt: '2026-08-20',
+  },
+  {
+    id: '9',
+    productId: '1',
+    reviewerName: 'Afia R.',
+    rating: 2,
+    comment: 'The material is nice but I found it rolled down after a few hours. Maybe better for shorter wear.',
+    status: 'pending',
+    createdAt: '2026-08-21',
   },
 ]

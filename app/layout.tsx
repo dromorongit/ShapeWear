@@ -3,6 +3,8 @@ import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
 import './globals.css'
 import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
+import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp'
+import { CartProvider } from '@/context/CartContext'
 
 const display = Playfair_Display({
   weight: ['400', '600', '700'],
@@ -38,11 +40,14 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${body.variable} ${mono.variable}`}>
       <body className="flex min-h-screen flex-col">
-        <Header />
-        <main className="flex-1">
-          {children}
-        </main>
-        <Footer />
+        <CartProvider>
+          <Header />
+          <main className="flex-1">
+            {children}
+          </main>
+          <Footer />
+          <FloatingWhatsApp />
+        </CartProvider>
       </body>
     </html>
   )
