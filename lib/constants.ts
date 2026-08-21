@@ -1,0 +1,6 @@
+export const BUSINESS_NAME = 'Shapewear Closet'
+export const TAGLINE = 'Confidence starts from underneath'
+export const PHONE = '0242711007'
+export const EMAIL = 'Shapewearcloset3@gmail.com'
+export const LOCATION = 'Ashongman Estate, Accra'
+export const TIKTOK = 'https://www.tiktok.com/@shapewear_closet'

@@ -1,0 +1,40 @@
+import ContourLine from '@/components/ui/ContourLine'
+import ProductGrid from '@/components/product/ProductGrid'
+
+export default function Home() {
+  return (
+    <>
+      <section className="relative overflow-hidden" style={{ minHeight: '60vh' }}>
+        <div className="absolute inset-0 md:hidden">
+          <ContourLine color="pink" opacity={0.12} className="h-full w-full translate-x-1/4 -translate-y-1/4" />
+        </div>
+        <div className="hidden md:block absolute inset-0">
+          <ContourLine color="pink" opacity={0.1} className="h-full w-1/2 translate-x-1/3" />
+        </div>
+
+        <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-col justify-center" style={{ minHeight: '60vh' }}>
+            <div className="max-w-2xl md:min-h-[70vh] md:flex md:flex-col md:justify-center">
+              <h1 className="font-hero text-ink">
+                Confidence starts from underneath
+              </h1>
+              <p className="mt-4 md:mt-6 font-body text-body text-ink/70 max-w-xl">
+                Precision-cut shapewear that supports your silhouette and moves with your life - no squeezing, no slipping, just seamless confidence.
+              </p>
+              <div className="mt-8">
+                <a
+                  href="#product-grid"
+                  className="inline-flex items-center justify-center rounded-md bg-pink px-6 py-3 font-body text-base font-medium text-white transition-colors hover:bg-pink/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
+                >
+                  Shop Now
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <ProductGrid />
+    </>
+  )
+}

@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  /* Font variables injected by next/font/google */
+}
+
+body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  color: #0B0B0D;
+  background-color: #FFFFFF;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.text-hero,
+.text-h1,
+.text-h2 {
+  font-family: var(--font-display), Georgia, serif;
+}
+
+.text-h3,
+.text-body,
+.text-small {
+  font-family: var(--font-body), system-ui, sans-serif;
+}
+
+.text-price {
+  font-family: var(--font-mono), monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

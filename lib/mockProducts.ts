@@ -1,0 +1,284 @@
+export interface ProductVariant {
+  shape: string
+  size: string
+  sku: string
+  stock: number
+}
+
+export interface MockProduct {
+  id: string
+  slug: string
+  name: string
+  shortDescription: string
+  description: string
+  price: number
+  salePrice: number | null
+  mainImage: string
+  additionalImages: string[]
+  category: string
+  shapes: string[]
+  sizes: string[]
+  variants: ProductVariant[]
+  stockStatus: 'in-stock' | 'low-stock' | 'out-of-stock'
+  isFeatured: boolean
+  isActive: boolean
+  tags: string[]
+}
+
+export const mockProducts: MockProduct[] = [
+  {
+    id: '1',
+    slug: 'high-waist-shaping-shorts',
+    name: 'High-Waist Shaping Shorts',
+    shortDescription: 'Smooth silhouette under fitted dresses with targeted compression from waist to mid-thigh.',
+    description: 'These high-waist shaping shorts deliver firm yet comfortable compression that smooths your midsection and hips. The seamless design sits invisibly under fitted dresses, skirts, and trousers, giving you a streamlined silhouette from waist to mid-thigh without sacrificing freedom of movement.',
+    price: 220,
+    salePrice: null,
+    mainImage: 'https://placehold.co/600x750/e0479c/ffffff?text=Shaping+Shorts',
+    additionalImages: [
+      'https://placehold.co/600x750/f6a8ce/0b0b0d?text=Shorts+Back',
+      'https://placehold.co/600x750/fdf3f7/0b0b0d?text=Shorts+Detail',
+    ],
+    category: 'Waist Trainer',
+    shapes: ['Hourglass', 'Fajas'],
+    sizes: ['S', 'M', 'L', 'XL'],
+    variants: [
+      { shape: 'Hourglass', size: 'S', sku: 'HSS-H-S', stock: 12 },
+      { shape: 'Hourglass', size: 'M', sku: 'HSS-H-M', stock: 8 },
+      { shape: 'Hourglass', size: 'L', sku: 'HSS-H-L', stock: 3 },
+      { shape: 'Hourglass', size: 'XL', sku: 'HSS-H-XL', stock: 0 },
+      { shape: 'Fajas', size: 'S', sku: 'HSS-F-S', stock: 6 },
+      { shape: 'Fajas', size: 'M', sku: 'HSS-F-M', stock: 14 },
+      { shape: 'Fajas', size: 'L', sku: 'HSS-F-L', stock: 7 },
+      { shape: 'Fajas', size: 'XL', sku: 'HSS-F-XL', stock: 0 },
+    ],
+    stockStatus: 'low-stock',
+    isFeatured: true,
+    isActive: true,
+    tags: ['bestseller', 'waist', 'seamless'],
+  },
+  {
+    id: '2',
+    slug: 'seamless-body-shaper',
+    name: 'Seamless Body Shaper',
+    shortDescription: 'All-over smoothing bodysuit with adjustable straps and a mid-thigh leg line.',
+    description: 'This seamless body shaper offers full-torso smoothing from bust to mid-thigh. Adjustable straps let you customize the lift and fit, while the mid-thigh leg line keeps it invisible under almost any outfit. Made from breathable, moisture-wicking fabric that moves with you all day.',
+    price: 340,
+    salePrice: 280,
+    mainImage: 'https://placehold.co/600x750/f0b429/0b0b0d?text=Body+Shaper',
+    additionalImages: [
+      'https://placehold.co/600x750/f6a8ce/ffffff?text=Shaper+Side',
+      'https://placehold.co/600x750/fdf3f7/0b0b0d?text=Shaper+Back',
+    ],
+    category: 'Body Shaper',
+    shapes: ['Hourglass'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    variants: [
+      { shape: 'Hourglass', size: 'S', sku: 'SBS-H-S', stock: 5 },
+      { shape: 'Hourglass', size: 'M', sku: 'SBS-H-M', stock: 9 },
+      { shape: 'Hourglass', size: 'L', sku: 'SBS-H-L', stock: 4 },
+      { shape: 'Hourglass', size: 'XL', sku: 'SBS-H-XL', stock: 2 },
+      { shape: 'Hourglass', size: 'XXL', sku: 'SBS-H-XXL', stock: 0 },
+    ],
+    stockStatus: 'low-stock',
+    isFeatured: true,
+    isActive: true,
+    tags: ['sale', 'seamless', 'all-in-one'],
+  },
+  {
+    id: '3',
+    slug: 'waist-trainer-vest',
+    name: 'Waist Trainer Vest',
+    shortDescription: 'Structured vest with hook-and-eye closures for intense waist definition and back support.',
+    description: 'The Waist Trainer Vest uses firm compression and a structured hook-and-eye front to cinch your waist with precision. The vest design also provides gentle back support, making it ideal for long wear during work or special occasions. Choose from latex or neoprene cores depending on your comfort preference.',
+    price: 420,
+    salePrice: null,
+    mainImage: 'https://placehold.co/600x750/3d0f26/ffffff?text=Waist+Vest',
+    additionalImages: [
+      'https://placehold.co/600x750/e0479c/ffffff?text=Vest+Detail',
+    ],
+    category: 'Waist Trainer',
+    shapes: ['Fajas', 'Latex'],
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    variants: [
+      { shape: 'Fajas', size: 'M', sku: 'WTV-F-M', stock: 7 },
+      { shape: 'Fajas', size: 'L', sku: 'WTV-F-L', stock: 5 },
+      { shape: 'Fajas', size: 'XL', sku: 'WTV-F-XL', stock: 3 },
+      { shape: 'Fajas', size: 'XXL', sku: 'WTV-F-XXL', stock: 0 },
+      { shape: 'Latex', size: 'M', sku: 'WTV-L-M', stock: 4 },
+      { shape: 'Latex', size: 'L', sku: 'WTV-L-L', stock: 8 },
+      { shape: 'Latex', size: 'XL', sku: 'WTV-L-XL', stock: 2 },
+      { shape: 'Latex', size: 'XXL', sku: 'WTV-L-XXL', stock: 6 },
+    ],
+    stockStatus: 'in-stock',
+    isFeatured: true,
+    isActive: true,
+    tags: ['waist', 'back-support', 'structured'],
+  },
+  {
+    id: '4',
+    slug: 'butt-lifter-shorts',
+    name: 'Butt Lifter Shorts',
+    shortDescription: 'High-compression shorts with built-in padding and hip-lift panels for a natural curve.',
+    description: 'These butt lifter shorts combine high compression with strategically placed lift panels and removable padding to enhance your natural curves. The waistband stays flat and secure, while the breathable hip panels prevent rolling during all-day wear.',
+    price: 195,
+    salePrice: null,
+    mainImage: 'https://placehold.co/600x750/fdf3f7/0b0b0d?text=Butt+Lifter',
+    additionalImages: [
+      'https://placehold.co/600x750/f0b429/0b0b0d?text=Lifter+Back',
+    ],
+    category: 'Butt Lifter',
+    shapes: ['Hourglass', 'Fajas'],
+    sizes: ['S', 'M', 'L', 'XL'],
+    variants: [
+      { shape: 'Hourglass', size: 'S', sku: 'BLS-H-S', stock: 15 },
+      { shape: 'Hourglass', size: 'M', sku: 'BLS-H-M', stock: 20 },
+      { shape: 'Hourglass', size: 'L', sku: 'BLS-H-L', stock: 11 },
+      { shape: 'Hourglass', size: 'XL', sku: 'BLS-H-XL', stock: 4 },
+      { shape: 'Fajas', size: 'S', sku: 'BLS-F-S', stock: 9 },
+      { shape: 'Fajas', size: 'M', sku: 'BLS-F-M', stock: 13 },
+      { shape: 'Fajas', size: 'L', sku: 'BLS-F-L', stock: 7 },
+      { shape: 'Fajas', size: 'XL', sku: 'BLS-F-XL', stock: 2 },
+    ],
+    stockStatus: 'in-stock',
+    isFeatured: false,
+    isActive: true,
+    tags: ['butt-lifter', 'hip-pads', 'curve'],
+  },
+  {
+    id: '5',
+    slug: 'tummy-control-bodysuit',
+    name: 'Tummy Control Bodysuit',
+    shortDescription: 'Full-body compression with a thong back and shelf bra for seamless layering.',
+    description: 'This tummy control bodysuit provides targeted compression around your midsection while the shelf bra offers light support without wires. The thong back eliminates visible panty lines, making it perfect for bodycon dresses and fitted tops. Four-way stretch fabric ensures comfort through every move.',
+    price: 290,
+    salePrice: 230,
+    mainImage: 'https://placehold.co/600x750/e0479c/ffffff?text=Bodysuit',
+    additionalImages: [
+      'https://placehold.co/600x750/f6a8ce/0b0b0d?text=Bodysuit+Back',
+      'https://placehold.co/600x750/fdf3f7/0b0b0d?text=Bodysuit+Detail',
+    ],
+    category: 'Tummy Control',
+    shapes: ['Hourglass'],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    variants: [
+      { shape: 'Hourglass', size: 'S', sku: 'TCB-H-S', stock: 10 },
+      { shape: 'Hourglass', size: 'M', sku: 'TCB-H-M', stock: 14 },
+      { shape: 'Hourglass', size: 'L', sku: 'TCB-H-L', stock: 6 },
+      { shape: 'Hourglass', size: 'XL', sku: 'TCB-H-XL', stock: 1 },
+      { shape: 'Hourglass', size: 'XXL', sku: 'TCB-H-XXL', stock: 0 },
+    ],
+    stockStatus: 'low-stock',
+    isFeatured: true,
+    isActive: true,
+    tags: ['sale', 'bodysuit', 'thong-back'],
+  },
+  {
+    id: '6',
+    slug: 'fajas-colombianas',
+    name: 'Fajas Colombianas Premium',
+    shortDescription: 'Authentic high-compression faja with abdominal reinforcement and adjustable back straps.',
+    description: 'Our premium Fajas Colombianas deliver the signature high-compression fit that has made Colombian shapewear famous worldwide. Reinforced abdominal panels and adjustable back straps let you control your level of compression, while the cotton-lined interior keeps you cool and dry.',
+    price: 480,
+    salePrice: null,
+    mainImage: 'https://placehold.co/600x750/3d0f26/ffffff?text=Fajas',
+    additionalImages: [
+      'https://placehold.co/600x750/f0b429/0b0b0d?text=Fajas+Detail',
+    ],
+    category: 'Waist Trainer',
+    shapes: ['Fajas'],
+    sizes: ['M', 'L', 'XL', 'XXL'],
+    variants: [
+      { shape: 'Fajas', size: 'M', sku: 'FJC-F-M', stock: 4 },
+      { shape: 'Fajas', size: 'L', sku: 'FJC-F-L', stock: 6 },
+      { shape: 'Fajas', size: 'XL', sku: 'FJC-F-XL', stock: 2 },
+      { shape: 'Fajas', size: 'XXL', sku: 'FJC-F-XXL', stock: 0 },
+    ],
+    stockStatus: 'low-stock',
+    isFeatured: true,
+    isActive: true,
+    tags: ['premium', 'fajas', 'compression'],
+  },
+  {
+    id: '7',
+    slug: 'slimming-leggings',
+    name: 'Slimming Leggings',
+    shortDescription: 'Full-length compression leggings with tummy and hip control panels.',
+    description: 'These slimming leggings combine everyday comfort with targeted compression panels around the tummy, hips, and thighs. The high-waisted band stays smooth without rolling, and the moisture-wicking fabric keeps you comfortable from gym sessions to casual outings.',
+    price: 250,
+    salePrice: 199,
+    mainImage: 'https://placehold.co/600x750/f6a8ce/ffffff?text=Leggings',
+    additionalImages: [
+      'https://placehold.co/600x750/e0479c/ffffff?text=Leggings+Side',
+      'https://placehold.co/600x750/fdf3f7/0b0b0d?text=Leggings+Detail',
+    ],
+    category: 'Body Shaper',
+    shapes: ['Hourglass', 'Fajas'],
+    sizes: ['S', 'M', 'L', 'XL'],
+    variants: [
+      { shape: 'Hourglass', size: 'S', sku: 'SLG-H-S', stock: 18 },
+      { shape: 'Hourglass', size: 'M', sku: 'SLG-H-M', stock: 22 },
+      { shape: 'Hourglass', size: 'L', sku: 'SLG-H-L', stock: 15 },
+      { shape: 'Hourglass', size: 'XL', sku: 'SLG-H-XL', stock: 8 },
+      { shape: 'Fajas', size: 'S', sku: 'SLG-F-S', stock: 7 },
+      { shape: 'Fajas', size: 'M', sku: 'SLG-F-M', stock: 11 },
+      { shape: 'Fajas', size: 'L', sku: 'SLG-F-L', stock: 5 },
+      { shape: 'Fajas', size: 'XL', sku: 'SLG-F-XL', stock: 3 },
+    ],
+    stockStatus: 'in-stock',
+    isFeatured: false,
+    isActive: true,
+    tags: ['sale', 'leggings', 'everyday'],
+  },
+  {
+    id: '8',
+    slug: 'postpartum-shapewear',
+    name: 'Postpartum Support Shaper',
+    shortDescription: 'Gentle compression designed for recovery, with a front panel that supports without squeezing.',
+    description: 'Designed with new mothers in mind, this postpartum shaper provides gentle, graduated compression that supports your core during recovery without putting pressure on your healing abdomen. The front panel is adjustable and removable, and the breathable fabric keeps you comfortable around the clock.',
+    price: 310,
+    salePrice: null,
+    mainImage: 'https://placehold.co/600x750/fdf3f7/0b0b0d?text=Postpartum',
+    additionalImages: [
+      'https://placehold.co/600x750/f6a8ce/ffffff?text=Postpartum+Side',
+    ],
+    category: 'Tummy Control',
+    shapes: ['Hourglass'],
+    sizes: ['M', 'L', 'XL'],
+    variants: [
+      { shape: 'Hourglass', size: 'M', sku: 'PSS-H-M', stock: 6 },
+      { shape: 'Hourglass', size: 'L', sku: 'PSS-H-L', stock: 9 },
+      { shape: 'Hourglass', size: 'XL', sku: 'PSS-H-XL', stock: 3 },
+    ],
+    stockStatus: 'in-stock',
+    isFeatured: false,
+    isActive: true,
+    tags: ['postpartum', 'gentle', 'recovery'],
+  },
+  {
+    id: '9',
+    slug: 'compression-sports-bra',
+    name: 'Compression Sports Bra',
+    shortDescription: 'High-impact support bra with moisture-wicking fabric and a secure racerback design.',
+    description: 'Keep everything in place during high-impact workouts with this compression sports bra. The moisture-wicking fabric and breathable mesh back panel regulate temperature, while the secure racerback and hook-and-eye closure ensure zero bounce and full confidence.',
+    price: 180,
+    salePrice: 145,
+    mainImage: 'https://placehold.co/600x750/e0479c/ffffff?text=Sports+Bra',
+    additionalImages: [
+      'https://placehold.co/600x750/f0b429/0b0b0d?text=Sports+Bra+Back',
+    ],
+    category: 'Body Shaper',
+    shapes: ['Hourglass'],
+    sizes: ['S', 'M', 'L', 'XL'],
+    variants: [
+      { shape: 'Hourglass', size: 'S', sku: 'CSB-H-S', stock: 20 },
+      { shape: 'Hourglass', size: 'M', sku: 'CSB-H-M', stock: 25 },
+      { shape: 'Hourglass', size: 'L', sku: 'CSB-H-L', stock: 18 },
+      { shape: 'Hourglass', size: 'XL', sku: 'CSB-H-XL', stock: 6 },
+    ],
+    stockStatus: 'in-stock',
+    isFeatured: false,
+    isActive: true,
+    tags: ['sale', 'sports', 'high-impact'],
+  },
+]
