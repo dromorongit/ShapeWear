@@ -47,7 +47,7 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
         </div>
 
         <div className="p-4">
-          <h3 className="font-body text-h3 font-semibold text-ink group-hover:text-pink transition-colors">
+          <h3 className="font-body text-base font-semibold text-ink group-hover:text-pink transition-colors">
             {product.name}
           </h3>
 

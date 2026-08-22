@@ -22,7 +22,7 @@ const config: Config = {
         mono: ['var(--font-mono)', 'monospace'],
       },
       fontSize: {
-        hero: ['clamp(3rem, 8vw, 5.5rem)', { lineHeight: '1.05', fontWeight: '700' }],
+        hero: ['clamp(3.5rem, 10vw, 7.5rem)', { lineHeight: '1.05', fontWeight: '700' }],
         h1: ['2.25rem', { lineHeight: '1.2', fontWeight: '600' }],
         h2: ['1.75rem', { lineHeight: '1.3', fontWeight: '600' }],
         h3: ['1.25rem', { lineHeight: '1.4', fontWeight: '600' }],
