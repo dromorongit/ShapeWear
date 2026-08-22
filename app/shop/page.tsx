@@ -1,13 +1,17 @@
 import { Metadata } from 'next'
 import ContourLine from '@/components/ui/ContourLine'
 import ProductGrid from '@/components/product/ProductGrid'
+import { getAllActiveProducts } from '@/lib/db/queries/products'
 
 export const metadata: Metadata = {
   title: 'Shop - Shapewear Closet',
   description: 'Browse the full Shapewear Closet catalog. Waist trainers, body shapers, tummy control, and more.',
 }
 
-const ShopPage = () => {
+export const revalidate = 3600
+
+const ShopPage = async () => {
+  const products = await getAllActiveProducts()
   return (
     <div>
       <section className="relative overflow-hidden bg-ink/[0.02] py-16 md:py-20">
@@ -27,7 +31,7 @@ const ShopPage = () => {
           </div>
         </div>
       </section>
-      <ProductGrid />
+      <ProductGrid products={products} />
     </div>
   )
 }

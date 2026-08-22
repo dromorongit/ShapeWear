@@ -3,12 +3,13 @@ import Link from 'next/link'
 import Reveal from '@/components/ui/Reveal'
 import ContourLine from '@/components/ui/ContourLine'
 import ProductCard from '@/components/product/ProductCard'
-import { mockProducts } from '@/lib/mockProducts'
+import { getFeaturedProducts } from '@/lib/db/queries/products'
 import { TAGLINE } from '@/lib/constants'
 
-const featuredProducts = mockProducts.filter((product) => product.isFeatured)
+export const revalidate = 3600
 
-export default function Home() {
+export default async function Home() {
+  const featuredProducts = await getFeaturedProducts()
   return (
     <>
       <section className="relative overflow-hidden" style={{ minHeight: '60vh' }}>

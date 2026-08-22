@@ -1,15 +1,13 @@
-import { mockReviews } from '@/lib/mockReviews'
 import ReviewForm from './ReviewForm'
-import { MockProduct } from '@/lib/mockProducts'
+import { getApprovedReviewsForProduct } from '@/lib/db/queries/reviews'
+import type { MockProduct } from '@/lib/mockProducts'
 
 interface ReviewsSectionProps {
   product: MockProduct
 }
 
-const ReviewsSection = ({ product }: ReviewsSectionProps) => {
-  const approvedReviews = mockReviews.filter(
-    (review) => review.productId === product.id && review.status === 'approved'
-  )
+const ReviewsSection = async ({ product }: ReviewsSectionProps) => {
+  const approvedReviews = await getApprovedReviewsForProduct(product.id)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-GB', {

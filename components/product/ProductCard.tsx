@@ -2,10 +2,10 @@ import Image from 'next/image'
 import Link from 'next/link'
 import Card from '@/components/ui/Card'
 import Badge from '@/components/ui/Badge'
-import { MockProduct } from '@/lib/mockProducts'
+import type { ProductCardData } from '@/lib/db/queries/products'
 
 interface ProductCardProps {
-  product: MockProduct
+  product: ProductCardData
   priority?: boolean
 }
 

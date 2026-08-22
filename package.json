@@ -7,9 +7,11 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "db:seed": "ts-node --transpile-only -P tsconfig.seed.json lib/db/seed.ts"
   },
   "dependencies": {
+    "mongoose": "^9.9.3",
     "next": "^14.2.35",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
@@ -20,10 +22,12 @@
     "@types/react": "^18.3.12",
     "@types/react-dom": "^18.3.1",
     "autoprefixer": "^10.4.20",
+    "dotenv": "^17.4.2",
     "eslint": "^8.57.1",
     "eslint-config-next": "^14.2.35",
     "postcss": "^8.4.49",
     "tailwindcss": "^3.4.16",
+    "ts-node": "^10.9.2",
     "typescript": "^5.6.3"
   }
 }

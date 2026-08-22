@@ -4,23 +4,23 @@ import ImageGallery from '@/components/product/ImageGallery'
 import VariantSelector from '@/components/product/VariantSelector'
 import ReviewsSection from '@/components/product/ReviewsSection'
 import ProductCard from '@/components/product/ProductCard'
-import { mockProducts } from '@/lib/mockProducts'
+import {
+  getProductBySlug,
+  getProductSlugs,
+  getRelatedProducts,
+  getAllActiveProducts,
+} from '@/lib/db/queries/products'
 import { BUSINESS_NAME } from '@/lib/constants'
 
-interface ProductPageProps {
-  params: {
-    slug: string
-  }
-}
+export const revalidate = 3600
 
 export async function generateStaticParams() {
-  return mockProducts.map((product) => ({
-    slug: product.slug,
-  }))
+  const slugs = await getProductSlugs()
+  return slugs.map((slug) => ({ slug }))
 }
 
-export async function generateMetadata({ params }: ProductPageProps) {
-  const product = mockProducts.find((p) => p.slug === params.slug)
+export async function generateMetadata({ params }: { params: { slug: string } }) {
+  const product = await getProductBySlug(params.slug)
 
   if (!product) {
     return {
@@ -34,18 +34,21 @@ export async function generateMetadata({ params }: ProductPageProps) {
   }
 }
 
-const ProductPage = ({ params }: ProductPageProps) => {
-  const product = mockProducts.find((p) => p.slug === params.slug)
+const ProductPage = async ({ params }: { params: { slug: string } }) => {
+  const product = await getProductBySlug(params.slug)
 
   if (!product) {
     notFound()
   }
 
-  const relatedProducts = mockProducts
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4)
+  let relatedProducts = await getRelatedProducts(product.category, product.slug, 4)
 
-  const displayProducts = relatedProducts.length >= 3 ? relatedProducts : mockProducts.filter((p) => p.id !== product.id).slice(0, 4)
+  if (relatedProducts.length < 3) {
+    const all = await getAllActiveProducts()
+    relatedProducts = all
+      .filter((p) => p.id !== product.id)
+      .slice(0, 4)
+  }
 
   return (
     <div className="py-8 md:py-12">
@@ -97,14 +100,14 @@ const ProductPage = ({ params }: ProductPageProps) => {
 
              <p className="mt-4 font-body text-small text-ink/50">Category: {product.category}</p>
 
-              <div className="mt-6">
-               <VariantSelector
-                 shapes={product.shapes}
-                 sizes={product.sizes}
-                 variants={product.variants}
-                 product={product}
-               />
-             </div>
+               <div className="mt-6">
+                <VariantSelector
+                  shapes={product.shapes}
+                  sizes={product.sizes}
+                  variants={product.variants}
+                  product={product}
+                />
+              </div>
           </div>
         </div>
       </div>
@@ -117,7 +120,7 @@ const ProductPage = ({ params }: ProductPageProps) => {
           <p className="mt-2 font-body text-body text-ink/60">Similar pieces you might love.</p>
 
           <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-            {displayProducts.map((p) => (
+            {relatedProducts.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
