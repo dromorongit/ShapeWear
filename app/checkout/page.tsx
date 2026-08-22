@@ -119,7 +119,7 @@ const CheckoutPage = () => {
                   value={form.phone}
                   onChange={handleChange}
                   error={errors.phone}
-                  placeholder="0242711007 or +233242711007"
+                  placeholder="233242711007"
                   required
                 />
                 <Input

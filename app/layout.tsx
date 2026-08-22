@@ -30,6 +30,9 @@ const mono = DM_Mono({
 export const metadata: Metadata = {
   title: 'Shapewear Closet',
   description: 'Confidence starts from underneath',
+  icons: {
+    icon: '/images/Shapewearlogo.jpg',
+  },
 }
 
 export default function RootLayout({

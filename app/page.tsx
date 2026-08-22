@@ -1,3 +1,4 @@
+import Image from 'next/image'
 import ContourLine from '@/components/ui/ContourLine'
 import ProductGrid from '@/components/product/ProductGrid'
 
@@ -13,8 +14,8 @@ export default function Home() {
         </div>
 
         <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col justify-center" style={{ minHeight: '60vh' }}>
-            <div className="max-w-2xl md:min-h-[70vh] md:flex md:flex-col md:justify-center">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between" style={{ minHeight: '60vh' }}>
+            <div className="max-w-2xl md:min-h-[70vh] md:flex md:flex-col md:justify-center md:w-1/2">
               <h1 className="font-hero text-ink">
                 Confidence starts from underneath
               </h1>
@@ -28,6 +29,18 @@ export default function Home() {
                 >
                   Shop Now
                 </a>
+              </div>
+            </div>
+            <div className="mt-8 md:mt-0 md:w-1/2 md:pl-12">
+              <div className="relative w-full" style={{ minHeight: '40vh' }}>
+                <Image
+                  src="/images/shapewearhero.jpg"
+                  alt="Shapewear hero"
+                  fill
+                  priority
+                  className="object-contain"
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                />
               </div>
             </div>
           </div>

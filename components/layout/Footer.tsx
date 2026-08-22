@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { FaTiktok } from 'react-icons/fa'
 import { BUSINESS_NAME, TAGLINE, PHONE, EMAIL, LOCATION, TIKTOK } from '@/lib/constants'
 
 const Footer = () => {
@@ -34,7 +35,8 @@ const Footer = () => {
             <h4 className="font-body text-h3 font-semibold text-ink">Follow Us</h4>
             <ul className="mt-4 space-y-2">
               <li>
-                <Link href={TIKTOK} target="_blank" rel="noopener noreferrer" className="font-body text-body text-ink/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                <Link href={TIKTOK} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 font-body text-body text-ink/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                  <FaTiktok size={20} />
                   TikTok
                 </Link>
               </li>
