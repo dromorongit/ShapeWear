@@ -23,9 +23,9 @@ export default function Home() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between" style={{ minHeight: '60vh' }}>
             <div className="max-w-2xl md:min-h-[70vh] md:flex md:flex-col md:justify-center md:w-1/2">
               <Reveal>
-                <h1 className="font-hero text-ink relative inline-block">
+                <h1 className="font-hero text-ink relative inline-block tracking-tight">
                   Confidence starts from underneath
-                  <span className="absolute -bottom-2 left-0 h-1 w-16 bg-gold rounded-full" aria-hidden="true" />
+                  <span className="absolute -bottom-3 left-0 h-1 w-20 bg-gold rounded-full" aria-hidden="true" />
                 </h1>
               </Reveal>
               <Reveal delay={150}>
