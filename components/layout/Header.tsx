@@ -2,13 +2,10 @@
 
 import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
-import { BUSINESS_NAME } from '@/lib/constants'
 import { useCart } from '@/context/CartContext'
-import CartDrawer from '@/components/cart/CartDrawer'
+import { BUSINESS_NAME } from '@/lib/constants'
 
 const Header = () => {
-  const [isCartOpen, setIsCartOpen] = useState(false)
   const { totalItems } = useCart()
 
   return (
@@ -56,9 +53,8 @@ const Header = () => {
         </nav>
 
         <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={() => setIsCartOpen(true)}
+          <Link
+            href="/cart"
             className="relative flex h-10 w-10 items-center justify-center rounded-md text-ink hover:bg-blush focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
             aria-label="Open cart"
           >
@@ -72,7 +68,7 @@ const Header = () => {
                 {totalItems > 9 ? '9+' : totalItems}
               </span>
             )}
-          </button>
+          </Link>
 
           <details className="md:hidden">
             <summary className="list-none flex h-10 w-10 cursor-pointer items-center justify-center rounded-md text-ink hover:bg-blush focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2">
@@ -91,8 +87,6 @@ const Header = () => {
           </details>
         </div>
       </div>
-
-      <CartDrawer isOpen={isCartOpen} onClose={() => setIsCartOpen(false)} />
     </header>
   )
 }

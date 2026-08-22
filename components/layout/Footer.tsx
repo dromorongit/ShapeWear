@@ -8,10 +8,36 @@ const Footer = () => {
   return (
     <footer className="border-t border-ink/5 bg-blush/50">
       <div className="mx-auto max-w-7xl px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-3">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-4">
           <div>
             <h3 className="font-display text-h2 font-semibold text-ink">{BUSINESS_NAME}</h3>
             <p className="mt-2 font-body text-body text-ink/60">{TAGLINE}</p>
+          </div>
+
+          <div>
+            <h4 className="font-body text-h3 font-semibold text-ink">Quick Links</h4>
+            <ul className="mt-4 space-y-2">
+              <li>
+                <Link href="/" className="font-body text-body text-ink/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                  Home
+                </Link>
+              </li>
+              <li>
+                <Link href="/shop" className="font-body text-body text-ink/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                  Shop
+                </Link>
+              </li>
+              <li>
+                <Link href="/about" className="font-body text-body text-ink/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                  About
+                </Link>
+              </li>
+              <li>
+                <Link href="/contact" className="font-body text-body text-ink/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                  Contact
+                </Link>
+              </li>
+            </ul>
           </div>
 
           <div>

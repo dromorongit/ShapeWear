@@ -1,6 +1,10 @@
 import Image from 'next/image'
+import Link from 'next/link'
 import ContourLine from '@/components/ui/ContourLine'
-import ProductGrid from '@/components/product/ProductGrid'
+import ProductCard from '@/components/product/ProductCard'
+import { mockProducts } from '@/lib/mockProducts'
+
+const featuredProducts = mockProducts.filter((product) => product.isFeatured)
 
 export default function Home() {
   return (
@@ -23,12 +27,12 @@ export default function Home() {
                 Precision-cut shapewear that supports your silhouette and moves with your life - no squeezing, no slipping, just seamless confidence.
               </p>
               <div className="mt-8">
-                <a
-                  href="#product-grid"
+                <Link
+                  href="/shop"
                   className="inline-flex items-center justify-center rounded-md bg-pink px-6 py-3 font-body text-base font-medium text-white transition-colors hover:bg-pink/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
                 >
                   Shop Now
-                </a>
+                </Link>
               </div>
             </div>
             <div className="mt-8 md:mt-0 md:w-1/2 md:pl-12">
@@ -47,7 +51,27 @@ export default function Home() {
         </div>
       </section>
 
-      <ProductGrid />
+      <section id="product-grid" className="py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <h2 className="font-display text-h2 font-semibold text-ink">Featured Products</h2>
+          <p className="mt-2 font-body text-body text-ink/60">Our most-loved pieces, chosen for fit and everyday confidence.</p>
+
+          <div className="mt-10 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+            {featuredProducts.map((product, index) => (
+              <ProductCard key={product.id} product={product} priority={index < 4} />
+            ))}
+          </div>
+
+          <div className="mt-10 text-center">
+            <Link
+              href="/shop"
+              className="inline-flex items-center justify-center rounded-md border border-ink/10 bg-white px-6 py-3 font-body text-base font-medium text-ink transition-colors hover:bg-blush focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
+            >
+              View All Products
+            </Link>
+          </div>
+        </div>
+      </section>
     </>
   )
 }
