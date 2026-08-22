@@ -27,6 +27,7 @@ const config: Config = {
         h2: ['1.75rem', { lineHeight: '1.3', fontWeight: '600' }],
         h3: ['1.25rem', { lineHeight: '1.4', fontWeight: '600' }],
         body: ['1rem', { lineHeight: '1.6', fontWeight: '400' }],
+        lead: ['1.25rem', { lineHeight: '1.5', fontWeight: '400' }],
         small: ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],
         price: ['1.125rem', { lineHeight: '1.4', fontWeight: '500' }],
       },

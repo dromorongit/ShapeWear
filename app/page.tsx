@@ -30,7 +30,7 @@ export default async function Home() {
                 </h1>
               </Reveal>
               <Reveal delay={150}>
-                <p className="mt-6 md:mt-8 font-body text-body text-ink/70 max-w-xl">
+                <p className="mt-6 md:mt-8 font-body text-xl md:text-2xl text-ink/70 max-w-xl">
                   Precision-cut shapewear that supports your silhouette and moves with your life - no squeezing, no slipping, just seamless confidence.
                 </p>
               </Reveal>

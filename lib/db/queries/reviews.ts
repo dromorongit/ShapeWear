@@ -29,7 +29,7 @@ export async function getApprovedReviewsForProduct(productId: string): Promise<M
   await connectDb()
   const docs = (await Review.find({ productId, status: 'approved' })
     .lean()
-    .select('reviewerName rating comment status createdAt')
+    .select('_id productId reviewerName rating comment status createdAt')
     .sort({ createdAt: -1 })
     .exec()) as unknown as RawReview[]
   return docs.map(toReview)
@@ -39,7 +39,7 @@ export async function getPendingReviews(): Promise<MockReview[]> {
   await connectDb()
   const docs = (await Review.find({ status: 'pending' })
     .lean()
-    .select('reviewerName rating comment status createdAt')
+    .select('_id productId reviewerName rating comment status createdAt')
     .sort({ createdAt: -1 })
     .exec()) as unknown as RawReview[]
   return docs.map(toReview)
