@@ -29,7 +29,7 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
 
   return (
     <Link href={`/products/${product.slug}`} className="group block">
-      <Card className="overflow-hidden">
+      <Card className="product-card overflow-hidden">
         <div className="relative aspect-[4/5] overflow-hidden bg-blush">
           <Image
             src={product.mainImage}
