@@ -1,11 +1,6 @@
-'use client'
-
-import { useAdminAuth } from '@/components/admin/useAdminAuth'
 import ProductForm from '@/components/admin/ProductForm'
 
 export default function AdminNewProductPage() {
-  useAdminAuth()
-
   return (
     <div className="space-y-6">
       <div>

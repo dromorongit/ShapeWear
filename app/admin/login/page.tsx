@@ -9,23 +9,30 @@ export default function AdminLoginPage() {
   const router = useRouter()
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
+  const [loading, setLoading] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setError('')
+    setLoading(true)
 
-    const tempPassword = process.env.NEXT_PUBLIC_ADMIN_TEMP_PASSWORD
+    try {
+      const res = await fetch('/api/admin/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password }),
+      })
 
-    if (!tempPassword) {
-      setError('Admin password is not configured on the server.')
-      return
-    }
+      if (!res.ok) {
+        setError('Incorrect password. Please try again.')
+        return
+      }
 
-    if (password === tempPassword) {
-      sessionStorage.setItem('adminAuth', 'true')
       router.replace('/admin/dashboard')
-    } else {
-      setError('Incorrect password. Please try again.')
+    } catch {
+      setError('Something went wrong. Please try again.')
+    } finally {
+      setLoading(false)
     }
   }
 
@@ -49,9 +56,10 @@ export default function AdminLoginPage() {
             placeholder="Enter admin password"
             required
             error={error}
+            disabled={loading}
           />
-          <Button type="submit" fullWidth>
-            Sign In
+          <Button type="submit" fullWidth disabled={loading}>
+            {loading ? 'Signing in...' : 'Sign In'}
           </Button>
         </form>
         <p className="mt-4 text-center font-body text-small text-ink/50">

@@ -1,18 +1,18 @@
-'use client'
-
-import { useAdminAuth } from '@/components/admin/useAdminAuth'
 import { notFound } from 'next/navigation'
+import { connectDb } from '@/lib/db/connect'
+import Product from '@/lib/db/models/Product'
 import ProductForm from '@/components/admin/ProductForm'
-import { mockProducts } from '@/lib/mockProducts'
 import type { ProductFormData } from '@/components/admin/ProductForm'
 
-export default function AdminEditProductPage({
+export const dynamic = 'force-dynamic'
+
+export default async function AdminEditProductPage({
   params,
 }: {
   params: { id: string }
 }) {
-  useAdminAuth()
-  const product = mockProducts.find((p) => p.id === params.id)
+  await connectDb()
+  const product = await Product.findById(params.id).lean().exec()
 
   if (!product) {
     notFound()
@@ -44,7 +44,7 @@ export default function AdminEditProductPage({
           Update product details and variants.
         </p>
       </div>
-      <ProductForm initialData={initialData} />
+      <ProductForm initialData={initialData} productId={params.id} />
     </div>
   )
 }

@@ -1,8 +1,8 @@
 'use client'
 
 export default function AdminNav() {
-  const handleLogout = () => {
-    sessionStorage.removeItem('adminAuth')
+  const handleLogout = async () => {
+    await fetch('/api/admin/auth/logout', { method: 'POST' })
     window.location.href = '/admin/login'
   }
 

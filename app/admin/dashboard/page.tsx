@@ -1,6 +1,3 @@
-'use client'
-
-import { useAdminAuth } from '@/components/admin/useAdminAuth'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 
@@ -12,8 +9,6 @@ const stats = [
 ]
 
 export default function AdminDashboardPage() {
-  useAdminAuth()
-
   return (
     <div className="space-y-6">
       <div>

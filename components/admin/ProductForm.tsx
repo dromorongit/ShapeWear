@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, useCallback } from 'react'
+import Image from 'next/image'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
@@ -63,16 +64,19 @@ const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 
 interface ProductFormProps {
   initialData?: ProductFormData
-  onSubmit?: (data: ProductFormData) => void
+  productId?: string
 }
 
-export default function ProductForm({ initialData, onSubmit }: ProductFormProps) {
+export default function ProductForm({ initialData, productId }: ProductFormProps) {
   const [form, setForm] = useState<ProductFormData>(initialData ?? emptyProduct())
   const [mainPreview, setMainPreview] = useState<string | null>(initialData?.mainImage ?? null)
   const [additionalPreviews, setAdditionalPreviews] = useState<string[]>(
     initialData?.additionalImages ?? []
   )
   const [successMessage, setSuccessMessage] = useState('')
+  const [errorMessage, setErrorMessage] = useState('')
+  const [uploadingMain, setUploadingMain] = useState(false)
+  const [uploadingAdditional, setUploadingAdditional] = useState(false)
 
   useEffect(() => {
     if (initialData) {
@@ -109,19 +113,65 @@ export default function ProductForm({ initialData, onSubmit }: ProductFormProps)
     )
   }
 
-  const handleMainImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-    const preview = URL.createObjectURL(file)
-    setMainPreview(preview)
-    updateField('mainImage', preview)
+  const uploadToCloudinary = async (file: File): Promise<string> => {
+    const res = await fetch('/api/admin/cloudinary-signature')
+    if (!res.ok) throw new Error('Failed to get upload signature')
+    const { signature, timestamp, apiKey, cloudName, folder } = await res.json()
+
+    const formData = new FormData()
+    formData.append('file', file)
+    formData.append('api_key', apiKey)
+    formData.append('timestamp', String(timestamp))
+    formData.append('signature', signature)
+    formData.append('folder', folder)
+    formData.append('transformation', JSON.stringify({ quality: 'auto', format: 'auto' }))
+
+    const uploadRes = await fetch(
+      `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,
+      { method: 'POST', body: formData }
+    )
+
+    if (!uploadRes.ok) {
+      const err = await uploadRes.text()
+      throw new Error(`Upload failed: ${err}`)
+    }
+
+    const data = await uploadRes.json()
+    return data.secure_url
   }
 
-  const handleAdditionalImages = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMainImage = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setUploadingMain(true)
+    try {
+      const url = await uploadToCloudinary(file)
+      setMainPreview(url)
+      updateField('mainImage', url)
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'Image upload failed')
+    } finally {
+      setUploadingMain(false)
+    }
+  }
+
+  const handleAdditionalImages = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? [])
-    const previews = files.map((file) => URL.createObjectURL(file))
-    setAdditionalPreviews((prev) => [...prev, ...previews])
-    updateField('additionalImages', [...form.additionalImages, ...previews])
+    if (!files.length) return
+    setUploadingAdditional(true)
+    try {
+      const urls: string[] = []
+      for (const file of files) {
+        const url = await uploadToCloudinary(file)
+        urls.push(url)
+      }
+      setAdditionalPreviews((prev) => [...prev, ...urls])
+      updateField('additionalImages', [...form.additionalImages, ...urls])
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : 'Image upload failed')
+    } finally {
+      setUploadingAdditional(false)
+    }
   }
 
   const removeAdditionalImage = (index: number) => {
@@ -132,15 +182,40 @@ export default function ProductForm({ initialData, onSubmit }: ProductFormProps)
     )
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log('Submitting product:', form)
-    if (onSubmit) {
-      onSubmit(form)
-    } else {
-      setSuccessMessage('Product saved successfully! (Check console for data)')
-      setTimeout(() => setSuccessMessage(''), 3000)
+    setErrorMessage('')
+    setSuccessMessage('')
+
+    const payload = {
+      ...form,
+      price: Number(form.price),
+      salePrice: form.salePrice ? Number(form.salePrice) : null,
+      tags: form.tags
+        .split(',')
+        .map((t) => t.trim())
+        .filter(Boolean),
     }
+
+    const url = productId ? `/api/admin/products/${productId}` : '/api/admin/products'
+    const method = productId ? 'PUT' : 'POST'
+
+    const res = await fetch(url, {
+      method,
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    })
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}))
+      setErrorMessage(data.error || 'Failed to save product')
+      return
+    }
+
+    setSuccessMessage('Product saved successfully!')
+    setTimeout(() => {
+      window.location.href = '/admin/products'
+    }, 800)
   }
 
   return (
@@ -148,6 +223,11 @@ export default function ProductForm({ initialData, onSubmit }: ProductFormProps)
       {successMessage && (
         <div className="rounded-md bg-blush p-4 font-body text-body text-pink">
           {successMessage}
+        </div>
+      )}
+      {errorMessage && (
+        <div className="rounded-md bg-red-50 p-4 font-body text-body text-red-600">
+          {errorMessage}
         </div>
       )}
       <Card className="p-5 space-y-5">
@@ -270,17 +350,17 @@ export default function ProductForm({ initialData, onSubmit }: ProductFormProps)
             type="file"
             accept="image/*"
             onChange={handleMainImage}
-            className="block w-full text-small text-ink/70 file:mr-4 file:rounded-md file:border-0 file:bg-pink file:px-3 file:py-1.5 file:text-small file:font-medium file:text-white hover:file:bg-pink/90"
+            disabled={uploadingMain}
+            className="block w-full text-small text-ink/70 file:mr-4 file:rounded-md file:border-0 file:bg-pink file:px-3 file:py-1.5 file:text-small file:font-medium file:text-white hover:file:bg-pink/90 disabled:opacity-50"
           />
-          {mainPreview && (
+          {uploadingMain && (
+            <p className="mt-2 font-body text-small text-ink/60">Uploading main image...</p>
+          )}
+          {mainPreview && !uploadingMain && (
             <div className="mt-3 relative inline-block h-32 w-32 rounded-md border border-ink/10 overflow-hidden">
-              {/* eslint-disable-next-line @next/next/no-img-element */}
-              <img src={mainPreview} alt="Main preview" className="h-full w-full object-cover" />
+              <Image src={mainPreview} alt="Main preview" fill className="object-cover" />
             </div>
           )}
-          <p className="mt-2 font-body text-small text-ink/50">
-            Placeholder for Cloudinary integration - Phase 9.
-          </p>
         </div>
         <div>
           <label className="mb-1.5 block font-body text-small font-medium text-ink">
@@ -291,17 +371,20 @@ export default function ProductForm({ initialData, onSubmit }: ProductFormProps)
             accept="image/*"
             multiple
             onChange={handleAdditionalImages}
-            className="block w-full text-small text-ink/70 file:mr-4 file:rounded-md file:border-0 file:bg-pink file:px-3 file:py-1.5 file:text-small file:font-medium file:text-white hover:file:bg-pink/90"
+            disabled={uploadingAdditional}
+            className="block w-full text-small text-ink/70 file:mr-4 file:rounded-md file:border-0 file:bg-pink file:px-3 file:py-1.5 file:text-small file:font-medium file:text-white hover:file:bg-pink/90 disabled:opacity-50"
           />
-          {additionalPreviews.length > 0 && (
+          {uploadingAdditional && (
+            <p className="mt-2 font-body text-small text-ink/60">Uploading additional images...</p>
+          )}
+          {additionalPreviews.length > 0 && !uploadingAdditional && (
             <div className="mt-3 flex flex-wrap gap-3">
               {additionalPreviews.map((src, i) => (
                 <div
                   key={i}
                   className="relative h-24 w-24 rounded-md border border-ink/10 overflow-hidden"
                 >
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={src} alt={`Preview ${i + 1}`} className="h-full w-full object-cover" />
+                  <Image src={src} alt={`Preview ${i + 1}`} fill className="object-cover" />
                   <button
                     type="button"
                     onClick={() => removeAdditionalImage(i)}
@@ -314,9 +397,6 @@ export default function ProductForm({ initialData, onSubmit }: ProductFormProps)
               ))}
             </div>
           )}
-          <p className="mt-2 font-body text-small text-ink/50">
-            Placeholder for Cloudinary integration - Phase 9.
-          </p>
         </div>
       </Card>
 
