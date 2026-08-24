@@ -24,6 +24,9 @@ export interface IOrder extends Document {
   subtotal: number
   status: OrderStatus
   paystackReference?: string
+  paystackTransactionId?: string
+  paystackAmount?: number
+  paystackPaidAt?: Date
   createdAt: Date
   updatedAt: Date
 }
@@ -59,6 +62,9 @@ const OrderSchema = new Schema<IOrder>(
       index: true,
     },
     paystackReference: { type: String, unique: true, sparse: true, index: true },
+    paystackTransactionId: { type: String },
+    paystackAmount: { type: Number },
+    paystackPaidAt: { type: Date },
   },
   { timestamps: true }
 )

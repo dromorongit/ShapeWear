@@ -38,6 +38,7 @@ const CheckoutPage = () => {
   })
   const [errors, setErrors] = useState<FormErrors>({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [apiError, setApiError] = useState<string | null>(null)
 
   useEffect(() => {
     if (state.items.length === 0) {
@@ -49,9 +50,10 @@ const CheckoutPage = () => {
     const { name, value } = e.target
     setForm((prev) => ({ ...prev, [name]: value }))
     setErrors((prev) => ({ ...prev, [name]: undefined }))
+    setApiError(null)
   }
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     const newErrors: FormErrors = {}
 
@@ -77,10 +79,39 @@ const CheckoutPage = () => {
     }
 
     setIsSubmitting(true)
-    const orderId = `ORD-${Date.now().toString(36).toUpperCase()}`
-    sessionStorage.setItem('deliveryDetails', JSON.stringify(form))
-    const params = new URLSearchParams({ orderId })
-    router.push(`/order-confirmation?${params.toString()}`)
+    setApiError(null)
+
+    try {
+      const response = await fetch('/api/checkout/initiate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          customerName: form.fullName,
+          phone: form.phone,
+          email: form.email,
+          deliveryAddress: form.deliveryAddress,
+          orderNote: form.note,
+          items: state.items.map((item) => ({ sku: item.sku, quantity: item.quantity })),
+          subtotal,
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setApiError(data.error || 'Failed to initiate checkout')
+        setIsSubmitting(false)
+        return
+      }
+
+      sessionStorage.setItem('deliveryDetails', JSON.stringify(form))
+      window.location.href = data.authorizationUrl
+    } catch {
+      setApiError('Network error. Please try again.')
+      setIsSubmitting(false)
+    }
   }
 
   if (state.items.length === 0) {
@@ -205,9 +236,9 @@ const CheckoutPage = () => {
                   <p className="font-body text-small text-ink/60">Secure payment via card or mobile money</p>
                 </div>
               </div>
-              <p className="mt-2 font-body text-small text-ink/50">
-                Paystack integration is planned for Phase 10.
-              </p>
+              {apiError && (
+                <p className="mt-2 font-body text-small text-red-600">{apiError}</p>
+              )}
             </div>
 
             <button
@@ -231,3 +262,4 @@ const CheckoutPage = () => {
 }
 
 export default CheckoutPage
+
