@@ -49,6 +49,26 @@ export default function ProductTableClient({ products }: { products: ProductRow[
     })
   }
 
+  const toggleFeatured = async (id: string) => {
+    const product = productList.find((p) => p.id === id)
+    if (!product) return
+    const newStatus = !product.isFeatured
+
+    setProductList((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, isFeatured: newStatus } : p))
+    )
+
+    await fetch(`/api/admin/products/${id}`, {
+      method: 'PUT',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ isFeatured: newStatus }),
+    }).catch(() => {
+      setProductList((prev) =>
+        prev.map((p) => (p.id === id ? { ...p, isFeatured: !newStatus } : p))
+      )
+    })
+  }
+
   const deleteProduct = async (id: string) => {
     if (!confirm('Are you sure you want to delete this product?')) return
     setProductList((prev) => prev.filter((p) => p.id !== id))
@@ -77,6 +97,9 @@ export default function ProductTableClient({ products }: { products: ProductRow[
               </th>
               <th className="px-4 py-3 font-body text-small font-medium text-ink/60">
                 Active
+              </th>
+              <th className="px-4 py-3 font-body text-small font-medium text-ink/60">
+                Featured
               </th>
               <th className="px-4 py-3 font-body text-small font-medium text-ink/60">
                 Actions
@@ -135,6 +158,23 @@ export default function ProductTableClient({ products }: { products: ProductRow[
                     <span
                       className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${
                         product.isActive ? 'translate-x-5' : 'translate-x-0'
+                      }`}
+                    />
+                  </button>
+                </td>
+                <td className="px-4 py-4">
+                  <button
+                    type="button"
+                    onClick={() => toggleFeatured(product.id)}
+                    className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-pink focus:ring-offset-2 ${
+                      product.isFeatured ? 'bg-gold' : 'bg-ink/20'
+                    }`}
+                    role="switch"
+                    aria-checked={product.isFeatured}
+                  >
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${
+                        product.isFeatured ? 'translate-x-5' : 'translate-x-0'
                       }`}
                     />
                   </button>
