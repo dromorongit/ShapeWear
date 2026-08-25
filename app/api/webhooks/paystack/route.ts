@@ -1,3 +1,19 @@
+/**
+ * Paystack webhook endpoint for Shapewear Closet.
+ *
+ * DUAL-SITE ROUTING:
+ * This endpoint is the single registered Paystack webhook for both Shapewear Closet
+ * and Affordable Wigs Ghana because Paystack only allows one webhook URL per account.
+ *
+ * Routing logic:
+ * - References starting with "SC-" are Shapewear Closet orders and are processed locally.
+ * - All other references are forwarded to Affordable Wigs Ghana's webhook endpoint.
+ *
+ * If the sites ever get separate Paystack accounts:
+ * 1. Remove the forwarding logic below.
+ * 2. Update the Paystack dashboard to point directly at AWG's own webhook endpoint.
+ * 3. Revert this endpoint to handle only Shapewear Closet events.
+ */
 import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import crypto from 'crypto'
@@ -38,6 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     const signature = request.headers.get('x-paystack-signature')
+    const contentType = request.headers.get('content-type') || 'application/json'
     const rawBody = await request.text()
 
     if (!verifyPaystackSignature(rawBody, signature, paystackSecretKey)) {
@@ -46,15 +63,57 @@ export async function POST(request: NextRequest) {
 
     const event = JSON.parse(rawBody) as PaystackWebhookBody
 
+    const { reference } = event.data
+
+    if (!reference) {
+      console.error('Webhook: missing reference in payload')
+      return NextResponse.json({ error: 'Missing reference' }, { status: 400 })
+    }
+
+    if (!reference.startsWith('SC-')) {
+      console.log(`Webhook: forwarding non-SC reference ${reference} (event: ${event.event}) to AWG`)
+
+      const awgForwardUrl = process.env.AWG_WEBHOOK_FORWARD_URL
+
+      if (!awgForwardUrl) {
+        console.error('Webhook: AWG_WEBHOOK_FORWARD_URL not configured, cannot forward')
+        return NextResponse.json({ error: 'Forward target not configured' }, { status: 500 })
+      }
+
+      try {
+        const controller = new AbortController()
+        const timeoutId = setTimeout(() => controller.abort(), 10000)
+
+        const forwardResponse = await fetch(awgForwardUrl, {
+          method: 'POST',
+          headers: {
+            'x-paystack-signature': signature || '',
+            'content-type': contentType,
+          },
+          body: rawBody,
+          signal: controller.signal,
+        })
+
+        clearTimeout(timeoutId)
+
+        if (!forwardResponse.ok) {
+          console.error(`Webhook: forward failed with status ${forwardResponse.status} for reference ${reference}`)
+          return NextResponse.json({ error: 'Forward failed' }, { status: 502 })
+        }
+
+        console.log(`Webhook: forwarded successfully for reference ${reference} (event: ${event.event})`)
+        return NextResponse.json({ received: true })
+      } catch (forwardError) {
+        console.error(`Webhook: forward error for reference ${reference}`, forwardError)
+        return NextResponse.json({ error: 'Forward failed' }, { status: 502 })
+      }
+    }
+
     if (event.event !== 'charge.success') {
       return NextResponse.json({ received: true })
     }
 
-    const { reference, amount, paid_at, id } = event.data
-
-    if (!reference) {
-      return NextResponse.json({ error: 'Missing reference' }, { status: 400 })
-    }
+    const { amount, paid_at, id } = event.data
 
     const order = await Order.findOne({ paystackReference: reference }).exec()
 

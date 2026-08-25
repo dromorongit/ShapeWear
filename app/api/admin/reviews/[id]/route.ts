@@ -2,7 +2,9 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 import { connectDb } from '@/lib/db/connect'
 import Review from '@/lib/db/models/Review'
+import Product from '@/lib/db/models/Product'
 import { requireAdmin } from '@/lib/admin'
+import { revalidatePath } from 'next/cache'
 
 export async function PATCH(
   request: NextRequest,
@@ -29,6 +31,13 @@ export async function PATCH(
 
   if (!review) {
     return NextResponse.json({ error: 'Review not found' }, { status: 404 })
+  }
+
+  if (status === 'approved') {
+    const product = await Product.findById(review.productId).lean().exec()
+    if (product?.slug) {
+      revalidatePath(`/products/${product.slug}`)
+    }
   }
 
   return NextResponse.json({

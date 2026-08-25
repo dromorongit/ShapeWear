@@ -40,11 +40,47 @@ const ReviewForm = ({ productId }: ReviewFormProps) => {
   const [rating, setRating] = useState(0)
   const [comment, setComment] = useState('')
   const [submitted, setSubmitted] = useState(false)
+  const [error, setError] = useState<string | null>(null)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!name.trim() || rating === 0 || !comment.trim()) return
-    setSubmitted(true)
+    setError(null)
+
+    if (!name.trim() || rating === 0 || !comment.trim()) {
+      setError('Please fill in all fields and select a rating.')
+      return
+    }
+
+    setIsSubmitting(true)
+
+    try {
+      const response = await fetch('/api/reviews', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          productId,
+          reviewerName: name.trim(),
+          rating,
+          comment: comment.trim(),
+        }),
+      })
+
+      const data = await response.json()
+
+      if (!response.ok) {
+        setError(data.error || 'Failed to submit review. Please try again.')
+        setIsSubmitting(false)
+        return
+      }
+
+      setSubmitted(true)
+    } catch {
+      setError('Network error. Please try again.')
+      setIsSubmitting(false)
+    }
   }
 
   if (submitted) {
@@ -57,6 +93,11 @@ const ReviewForm = ({ productId }: ReviewFormProps) => {
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      {error && (
+        <div className="rounded-md border border-red-200 bg-red-50 p-4">
+          <p className="font-body text-body text-red-700">{error}</p>
+        </div>
+      )}
       <div>
         <label htmlFor={`review-name-${productId}`} className="mb-1.5 block font-body text-small font-medium text-ink">
           Name
@@ -69,6 +110,7 @@ const ReviewForm = ({ productId }: ReviewFormProps) => {
           required
           className="w-full rounded-md border border-ink/10 bg-white px-3 py-2 font-body text-body text-ink placeholder:text-ink/40 focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
           placeholder="Your name"
+          disabled={isSubmitting}
         />
       </div>
 
@@ -89,15 +131,16 @@ const ReviewForm = ({ productId }: ReviewFormProps) => {
           rows={4}
           className="w-full rounded-md border border-ink/10 bg-white px-3 py-2 font-body text-body text-ink placeholder:text-ink/40 focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
           placeholder="Share your experience with this product..."
+          disabled={isSubmitting}
         />
       </div>
 
       <button
         type="submit"
-        disabled={rating === 0}
+        disabled={rating === 0 || isSubmitting}
         className="inline-flex items-center justify-center rounded-md bg-pink px-6 py-3 font-body text-base font-medium text-white transition-colors hover:bg-pink/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
       >
-        Submit Review
+        {isSubmitting ? 'Submitting...' : 'Submit Review'}
       </button>
     </form>
   )
