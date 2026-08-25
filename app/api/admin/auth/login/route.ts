@@ -1,18 +1,31 @@
 import { NextResponse } from 'next/server'
 import bcrypt from 'bcryptjs'
+import { connectDb } from '@/lib/db/connect'
+import Admin from '@/lib/db/models/Admin'
 import { signAdminToken, getAuthCookieOptions, AUTH_COOKIE } from '@/lib/auth'
 
 export async function POST(request: Request) {
   try {
-    const body = await request.json()
-    const passwordHash = process.env.ADMIN_PASSWORD_HASH
+    await connectDb()
 
-    if (!passwordHash) {
+    const body = (await request.json()) as {
+      email?: string
+      password?: string
+    }
+
+    const { email, password } = body
+
+    if (!email || typeof email !== 'string' || !password || typeof password !== 'string') {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const password = typeof body.password === 'string' ? body.password : ''
-    const match = await bcrypt.compare(password, passwordHash)
+    const admin = await Admin.findOne({ email: email.trim().toLowerCase() }).lean().exec()
+
+    if (!admin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+
+    const match = await bcrypt.compare(password, admin.passwordHash)
 
     if (!match) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
