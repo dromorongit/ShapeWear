@@ -3,6 +3,7 @@ import Header from '@/components/layout/Header'
 import Footer from '@/components/layout/Footer'
 import FloatingWhatsApp from '@/components/layout/FloatingWhatsApp'
 import { CartProvider } from '@/context/CartContext'
+import RefTracker from '@/components/affiliate/RefTracker'
 
 export const metadata: Metadata = {
   title: 'Shapewear Closet',
@@ -23,6 +24,7 @@ export default function SiteLayout({
         </main>
         <Footer />
         <FloatingWhatsApp />
+        <RefTracker />
       </CartProvider>
     </div>
   )

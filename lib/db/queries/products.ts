@@ -1,6 +1,7 @@
 import { Types } from 'mongoose'
 import { connectDb } from '@/lib/db/connect'
 import Product from '@/lib/db/models/Product'
+import Category from '@/lib/db/models/Category'
 import type { IProductVariant, StockStatus } from '@/lib/db/models/Product'
 import type { MockProduct } from '@/lib/mockProducts'
 
@@ -100,9 +101,13 @@ export async function getFeaturedProducts(limit = 8): Promise<ProductCardData[]>
   return docs.map(toProductCard)
 }
 
-export async function getAllActiveProducts(): Promise<ProductCardData[]> {
+export async function getAllActiveProducts(category?: string): Promise<ProductCardData[]> {
   await connectDb()
-  const docs = (await Product.find({ isActive: true })
+  const filter: Record<string, unknown> = { isActive: true }
+  if (category) {
+    filter.category = category
+  }
+  const docs = (await Product.find(filter)
     .lean()
     .select(CARD_PROJECTION)
     .exec()) as unknown as RawProductCard[]
@@ -147,4 +152,13 @@ export async function getProductsByCategory(category: string): Promise<ProductCa
     .select(CARD_PROJECTION)
     .exec()) as unknown as RawProductCard[]
   return docs.map(toProductCard)
+}
+
+export async function getAllCategories(): Promise<{ id: string; name: string }[]> {
+  await connectDb()
+  const docs = (await Category.find({})
+    .lean()
+    .select('name')
+    .exec()) as unknown as { _id: { toString(): string }; name: string }[]
+  return docs.map((c) => ({ id: c._id.toString(), name: c.name }))
 }

@@ -29,6 +29,11 @@ export interface ProductFormData {
   additionalImages: string[]
 }
 
+interface CategoryOption {
+  id: string
+  name: string
+}
+
 const emptyVariant = (): ProductVariant => ({
   shape: '',
   size: '',
@@ -52,13 +57,6 @@ const emptyProduct = (): ProductFormData => ({
   additionalImages: [],
 })
 
-const CATEGORIES = [
-  'Waist Trainer',
-  'Body Shaper',
-  'Butt Lifter',
-  'Tummy Control',
-]
-
 const SHAPES = ['Hourglass', 'Fajas', 'Latex']
 const SIZES = ['S', 'M', 'L', 'XL', 'XXL']
 
@@ -77,6 +75,11 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
   const [errorMessage, setErrorMessage] = useState('')
   const [uploadingMain, setUploadingMain] = useState(false)
   const [uploadingAdditional, setUploadingAdditional] = useState(false)
+  const [categories, setCategories] = useState<CategoryOption[]>([])
+  const [showAddCategory, setShowAddCategory] = useState(false)
+  const [newCategoryName, setNewCategoryName] = useState('')
+  const [addingCategory, setAddingCategory] = useState(false)
+  const [categoryError, setCategoryError] = useState('')
 
   useEffect(() => {
     if (initialData) {
@@ -85,6 +88,28 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
       setAdditionalPreviews(initialData.additionalImages)
     }
   }, [initialData])
+
+  useEffect(() => {
+    let cancelled = false
+    const fetchCategories = async () => {
+      try {
+        const res = await fetch('/api/admin/categories')
+        if (!res.ok) throw new Error('Failed to load categories')
+        const data = await res.json()
+        if (!cancelled) {
+          setCategories(data)
+        }
+      } catch {
+        if (!cancelled) {
+          setCategories([])
+        }
+      }
+    }
+    fetchCategories()
+    return () => {
+      cancelled = true
+    }
+  }, [])
 
   const updateField = useCallback(<K extends keyof ProductFormData>(key: K, value: ProductFormData[K]) => {
     setForm((prev) => ({ ...prev, [key]: value }))
@@ -180,6 +205,30 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
       'additionalImages',
       form.additionalImages.filter((_, i) => i !== index)
     )
+  }
+
+  const handleAddCategory = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setCategoryError('')
+    setAddingCategory(true)
+    try {
+      const res = await fetch('/api/admin/categories', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: newCategoryName }),
+      })
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to add category')
+      const created: CategoryOption = { id: data.id, name: data.name }
+      setCategories((prev) => [...prev, created])
+      updateField('category', created.name)
+      setNewCategoryName('')
+      setShowAddCategory(false)
+    } catch (err) {
+      setCategoryError(err instanceof Error ? err.message : 'Failed to add category')
+    } finally {
+      setAddingCategory(false)
+    }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -297,17 +346,64 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             </label>
             <select
               value={form.category}
-              onChange={(e) => updateField('category', e.target.value)}
+              onChange={(e) => {
+                updateField('category', e.target.value)
+                if (e.target.value !== '__add_new') {
+                  setShowAddCategory(false)
+                }
+              }}
               className="w-full rounded-md border border-ink/10 bg-white px-3 py-2 font-body text-body text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
               required
             >
               <option value="">Select category</option>
-              {CATEGORIES.map((cat) => (
-                <option key={cat} value={cat}>
-                  {cat}
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.name}>
+                  {cat.name}
                 </option>
               ))}
+              <option value="__add_new">+ Add new category</option>
             </select>
+            {form.category === '__add_new' && !showAddCategory && (
+              <button
+                type="button"
+                onClick={() => setShowAddCategory(true)}
+                className="mt-2 font-body text-small text-pink hover:underline"
+              >
+                + Add new category
+              </button>
+            )}
+            {showAddCategory && (
+              <form onSubmit={handleAddCategory} className="mt-3 flex flex-col gap-2">
+                <Input
+                  label="New category name"
+                  value={newCategoryName}
+                  onChange={(e) => setNewCategoryName(e.target.value)}
+                  placeholder="e.g. New Collection"
+                  required
+                />
+                {categoryError && (
+                  <p className="font-body text-small text-red-600">{categoryError}</p>
+                )}
+                <div className="flex gap-2">
+                  <Button type="submit" size="sm" disabled={addingCategory}>
+                    {addingCategory ? 'Adding...' : 'Create & Select'}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      setShowAddCategory(false)
+                      setNewCategoryName('')
+                      setCategoryError('')
+                      updateField('category', '')
+                    }}
+                  >
+                    Cancel
+                  </Button>
+                </div>
+              </form>
+            )}
           </div>
           <Input
             label="Tags (comma separated)"

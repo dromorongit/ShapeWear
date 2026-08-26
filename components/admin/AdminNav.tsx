@@ -34,6 +34,14 @@ export default function AdminNav() {
             </li>
             <li>
               <a
+                href="/admin/categories"
+                className="flex items-center rounded-md px-3 py-2 font-body text-body font-medium text-ink/70 hover:bg-blush hover:text-pink transition-colors"
+              >
+                Categories
+              </a>
+            </li>
+            <li>
+              <a
                 href="/admin/reviews"
                 className="flex items-center rounded-md px-3 py-2 font-body text-body font-medium text-ink/70 hover:bg-blush hover:text-pink transition-colors"
               >

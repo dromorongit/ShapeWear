@@ -41,6 +41,12 @@ export default function AdminLayout({
               Products
             </a>
             <a
+              href="/admin/categories"
+              className="font-body text-small font-medium text-ink/70 hover:text-pink"
+            >
+              Categories
+            </a>
+            <a
               href="/admin/reviews"
               className="font-body text-small font-medium text-ink/70 hover:text-pink"
             >

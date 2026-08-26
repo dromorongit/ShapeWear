@@ -1,7 +1,8 @@
 import { Metadata } from 'next'
+import Link from 'next/link'
 import ContourLine from '@/components/ui/ContourLine'
 import ProductGrid from '@/components/product/ProductGrid'
-import { getAllActiveProducts } from '@/lib/db/queries/products'
+import { getAllActiveProducts, getAllCategories } from '@/lib/db/queries/products'
 
 export const metadata: Metadata = {
   title: 'Shop - Shapewear Closet',
@@ -10,8 +11,13 @@ export const metadata: Metadata = {
 
 export const revalidate = 3600
 
-const ShopPage = async () => {
-  const products = await getAllActiveProducts()
+const ShopPage = async ({ searchParams }: { searchParams: { category?: string } }) => {
+  const selectedCategory = searchParams.category || ''
+  const [products, categories] = await Promise.all([
+    getAllActiveProducts(selectedCategory || undefined),
+    getAllCategories(),
+  ])
+
   return (
     <div>
       <section className="relative overflow-hidden bg-ink/[0.02] py-16 md:py-20">
@@ -31,7 +37,39 @@ const ShopPage = async () => {
           </div>
         </div>
       </section>
-      <ProductGrid products={products} />
+      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pb-16">
+        <div className="flex flex-wrap gap-2">
+          <Link
+            href="/shop"
+            className={`inline-flex items-center rounded-full px-4 py-1.5 font-body text-small font-medium transition-colors ${
+              !selectedCategory
+                ? 'bg-pink text-white'
+                : 'bg-white border border-ink/10 text-ink/70 hover:border-pink hover:text-pink'
+            }`}
+          >
+            All
+          </Link>
+          {categories.map((cat) => {
+            const isActive = selectedCategory === cat.name
+            return (
+              <Link
+                key={cat.id}
+                href={`/shop?category=${encodeURIComponent(cat.name)}`}
+                className={`inline-flex items-center rounded-full px-4 py-1.5 font-body text-small font-medium transition-colors ${
+                  isActive
+                    ? 'bg-pink text-white'
+                    : 'bg-white border border-ink/10 text-ink/70 hover:border-pink hover:text-pink'
+                }`}
+              >
+                {cat.name}
+              </Link>
+            )
+          })}
+        </div>
+        <div className="mt-8">
+          <ProductGrid products={products} />
+        </div>
+      </section>
     </div>
   )
 }
