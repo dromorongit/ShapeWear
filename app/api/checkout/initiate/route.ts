@@ -3,6 +3,7 @@ import type { NextRequest } from 'next/server'
 import { connectDb } from '@/lib/db/connect'
 import Product from '@/lib/db/models/Product'
 import Order from '@/lib/db/models/Order'
+import Affiliate from '@/lib/db/models/Affiliate'
 
 interface CheckoutItem {
   sku: string
@@ -87,6 +88,24 @@ export async function POST(request: NextRequest) {
       )
     }
 
+    let affiliateId: string | undefined
+    let referralCode: string | undefined
+    let commissionRate: number | undefined
+    let commissionAmount: number | undefined
+    let commissionStatus: 'pending' | 'confirmed' | 'none' = 'none'
+
+    const scRef = request.cookies.get('sc_ref')?.value
+    if (scRef) {
+      const affiliate = await Affiliate.findOne({ referralCode: scRef, status: 'approved' }).lean().exec()
+      if (affiliate) {
+        affiliateId = affiliate._id.toString()
+        referralCode = affiliate.referralCode
+        commissionRate = affiliate.commissionRate
+        commissionAmount = computedSubtotal * (affiliate.commissionRate / 100)
+        commissionStatus = 'pending'
+      }
+    }
+
     const reference = generateReference()
 
     await Order.create({
@@ -99,6 +118,11 @@ export async function POST(request: NextRequest) {
       subtotal: computedSubtotal,
       status: 'pending',
       paystackReference: reference,
+      affiliateId,
+      referralCode,
+      commissionRate,
+      commissionAmount,
+      commissionStatus,
     })
 
     const paystackSecretKey = process.env.PAYSTACK_SECRET_KEY

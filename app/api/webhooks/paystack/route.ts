@@ -20,6 +20,7 @@ import crypto from 'crypto'
 import { connectDb } from '@/lib/db/connect'
 import Order from '@/lib/db/models/Order'
 import Product from '@/lib/db/models/Product'
+import Affiliate from '@/lib/db/models/Affiliate'
 import { revalidatePath } from 'next/cache'
 
 interface PaystackWebhookBody {
@@ -159,6 +160,21 @@ export async function POST(request: NextRequest) {
     order.paystackPaidAt = paid_at ? new Date(paid_at) : undefined
 
     await order.save()
+
+    if (order.affiliateId && order.commissionStatus === 'pending') {
+      await Affiliate.findOneAndUpdate(
+        { _id: order.affiliateId },
+        {
+          $inc: {
+            totalSales: 1,
+            totalCommissionEarned: order.commissionAmount || 0,
+          },
+        }
+      ).exec()
+
+      order.commissionStatus = 'confirmed'
+      await order.save()
+    }
 
     const uniqueSlugs = Array.from(new Set(affectedSlugs))
     uniqueSlugs.forEach((slug) => {

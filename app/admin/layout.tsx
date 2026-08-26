@@ -52,6 +52,12 @@ export default function AdminLayout({
             >
               Reviews
             </a>
+            <a
+              href="/admin/affiliates"
+              className="font-body text-small font-medium text-ink/70 hover:text-pink"
+            >
+              Affiliates
+            </a>
           </nav>
         </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8">

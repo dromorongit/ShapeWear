@@ -27,6 +27,11 @@ export interface IOrder extends Document {
   paystackTransactionId?: string
   paystackAmount?: number
   paystackPaidAt?: Date
+  affiliateId?: mongoose.Types.ObjectId
+  referralCode?: string
+  commissionRate?: number
+  commissionAmount?: number
+  commissionStatus?: 'none' | 'pending' | 'confirmed'
   createdAt: Date
   updatedAt: Date
 }
@@ -65,6 +70,15 @@ const OrderSchema = new Schema<IOrder>(
     paystackTransactionId: { type: String },
     paystackAmount: { type: Number },
     paystackPaidAt: { type: Date },
+    affiliateId: { type: Schema.Types.ObjectId, ref: 'Affiliate', index: true },
+    referralCode: { type: String, index: true },
+    commissionRate: { type: Number },
+    commissionAmount: { type: Number },
+    commissionStatus: {
+      type: String,
+      enum: ['none', 'pending', 'confirmed'],
+      default: 'none',
+    },
   },
   { timestamps: true }
 )
