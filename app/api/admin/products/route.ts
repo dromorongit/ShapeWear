@@ -46,8 +46,18 @@ export async function POST(request: NextRequest) {
     tags,
   } = body
 
-  if (!name || !slug || !description || !shortDescription || !price || !category || !mainImage || !variants) {
-    return NextResponse.json({ error: 'Missing required fields' }, { status: 400 })
+  const missingFields = []
+  if (!name) missingFields.push('name')
+  if (!slug) missingFields.push('slug')
+  if (!description) missingFields.push('description')
+  if (!shortDescription) missingFields.push('shortDescription')
+  if (!price) missingFields.push('price')
+  if (!category) missingFields.push('category')
+  if (!mainImage) missingFields.push('mainImage')
+  if (!variants) missingFields.push('variants')
+
+  if (missingFields.length > 0) {
+    return NextResponse.json({ error: `Missing required fields: ${missingFields.join(', ')}` }, { status: 400 })
   }
 
   let finalSlug = String(slug).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')

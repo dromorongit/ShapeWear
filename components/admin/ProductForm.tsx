@@ -447,6 +447,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             accept="image/*"
             onChange={handleMainImage}
             disabled={uploadingMain}
+            required
             className="block w-full text-small text-ink/70 file:mr-4 file:rounded-md file:border-0 file:bg-pink file:px-3 file:py-1.5 file:text-small file:font-medium file:text-white hover:file:bg-pink/90 disabled:opacity-50"
           />
           {uploadingMain && (
