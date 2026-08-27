@@ -8,6 +8,12 @@ import RefTracker from '@/components/affiliate/RefTracker'
 export const metadata: Metadata = {
   title: 'Shapewear Closet',
   description: 'Confidence starts from underneath',
+  openGraph: {
+    title: 'Shapewear Closet',
+    description: 'Confidence starts from underneath',
+    type: 'website',
+    locale: 'en_GH',
+  },
 }
 
 export default function SiteLayout({

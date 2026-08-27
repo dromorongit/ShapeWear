@@ -5,8 +5,14 @@ import ProductGrid from '@/components/product/ProductGrid'
 import { getAllActiveProducts, getAllCategories } from '@/lib/db/queries/products'
 
 export const metadata: Metadata = {
-  title: 'Shop - Shapewear Closet',
+  title: 'Shop All Shapewear - Shapewear Closet',
   description: 'Browse the full Shapewear Closet catalog. Waist trainers, body shapers, tummy control, and more.',
+  openGraph: {
+    title: 'Shop All Shapewear - Shapewear Closet',
+    description: 'Browse the full Shapewear Closet catalog. Waist trainers, body shapers, tummy control, and more.',
+    type: 'website',
+    url: '/shop',
+  },
 }
 
 export const dynamic = 'force-dynamic'

@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import type { Metadata } from 'next'
 import Reveal from '@/components/ui/Reveal'
 import ContourLine from '@/components/ui/ContourLine'
 import ProductCard from '@/components/product/ProductCard'
@@ -7,6 +8,25 @@ import { TAGLINE } from '@/lib/constants'
 import Hero from '@/components/home/Hero'
 
 export const dynamic = 'force-dynamic'
+
+export const metadata: Metadata = {
+  title: 'Shapewear Closet - Confidence Starts From Underneath',
+  description: 'Shop premium shapewear, waist trainers, body shapers, and tummy control wear in Ghana. Free delivery in Accra.',
+  openGraph: {
+    title: 'Shapewear Closet - Confidence Starts From Underneath',
+    description: 'Shop premium shapewear, waist trainers, body shapers, and tummy control wear in Ghana. Free delivery in Accra.',
+    type: 'website',
+    url: '/',
+    images: [
+      {
+        url: '/images/hero/shapewearhero.jpg',
+        width: 1280,
+        height: 1600,
+        alt: 'Model wearing shapewear from Shapewear Closet',
+      },
+    ],
+  },
+}
 
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts()

@@ -1,5 +1,7 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import type { Metadata } from 'next'
+import Script from 'next/script'
 import ImageGallery from '@/components/product/ImageGallery'
 import VariantSelector from '@/components/product/VariantSelector'
 import ReviewsSection from '@/components/product/ReviewsSection'
@@ -20,7 +22,7 @@ export async function generateStaticParams() {
   return slugs.map((slug) => ({ slug }))
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
+export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
   const product = await getProductBySlug(params.slug)
 
   if (!product) {
@@ -29,9 +31,27 @@ export async function generateMetadata({ params }: { params: { slug: string } })
     }
   }
 
+  const title = `${product.name} | ${BUSINESS_NAME}`
+  const description = product.shortDescription
+  const imageUrl = product.mainImage.startsWith('http') ? product.mainImage : `https://shapewearcloset.com${product.mainImage}`
+
   return {
-    title: `${product.name} | ${BUSINESS_NAME}`,
-    description: product.shortDescription,
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      type: 'website',
+      url: `/products/${product.slug}`,
+      images: [
+        {
+          url: imageUrl,
+          width: 800,
+          height: 1000,
+          alt: product.name,
+        },
+      ],
+    },
   }
 }
 
@@ -136,6 +156,31 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
           </div>
         </div>
       </section>
+
+      <Script
+        id="product-structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            '@context': 'https://schema.org',
+            '@type': 'Product',
+            name: product.name,
+            description: product.description,
+            image: product.mainImage.startsWith('http') ? product.mainImage : `https://shapewearcloset.com${product.mainImage}`,
+            offers: {
+              '@type': 'Offer',
+              price: product.salePrice ?? product.price,
+              priceCurrency: 'GHS',
+              availability: product.stockStatus === 'out-of-stock'
+                ? 'https://schema.org/OutOfStock'
+                : product.stockStatus === 'low-stock'
+                  ? 'https://schema.org/LimitedAvailability'
+                  : 'https://schema.org/InStock',
+              url: `https://shapewearcloset.com/products/${product.slug}`,
+            },
+          }),
+        }}
+      />
     </div>
   )
 }

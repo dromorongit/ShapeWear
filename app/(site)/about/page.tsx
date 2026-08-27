@@ -4,8 +4,14 @@ import Reveal from '@/components/ui/Reveal'
 import ContourLine from '@/components/ui/ContourLine'
 
 export const metadata: Metadata = {
-  title: 'About - Shapewear Closet',
+  title: 'About Shapewear Closet - Our Story',
   description: 'Learn about Shapewear Closet, a Ghana-based shapewear brand built on confidence, quality, and fit.',
+  openGraph: {
+    title: 'About Shapewear Closet - Our Story',
+    description: 'Learn about Shapewear Closet, a Ghana-based shapewear brand built on confidence, quality, and fit.',
+    type: 'website',
+    url: '/about',
+  },
 }
 
 const AboutPage = () => {

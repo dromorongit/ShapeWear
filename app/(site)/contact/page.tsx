@@ -6,8 +6,14 @@ import { BUSINESS_NAME, TAGLINE, PHONE, EMAIL, LOCATION, TIKTOK } from '@/lib/co
 import { getWhatsAppUrl } from '@/lib/whatsapp'
 
 export const metadata: Metadata = {
-  title: 'Contact - Shapewear Closet',
+  title: 'Contact Shapewear Closet - Get In Touch',
   description: `Reach out to ${BUSINESS_NAME}. We're based in ${LOCATION}. Call us on ${PHONE} or email ${EMAIL}.`,
+  openGraph: {
+    title: 'Contact Shapewear Closet - Get In Touch',
+    description: `Reach out to ${BUSINESS_NAME}. We're based in ${LOCATION}. Call us on ${PHONE} or email ${EMAIL}.`,
+    type: 'website',
+    url: '/contact',
+  },
 }
 
 const TikTokIcon = () => (

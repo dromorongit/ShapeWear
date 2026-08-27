@@ -24,6 +24,7 @@ const mono = DM_Mono({
 })
 
 export const metadata: Metadata = {
+  metadataBase: new URL('https://shapewearcloset.com'),
   title: 'Shapewear Closet',
   description: 'Confidence starts from underneath',
   icons: {
