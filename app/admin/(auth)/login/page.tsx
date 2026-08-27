@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import Button from '@/components/ui/Button'
 import Input from '@/components/ui/Input'
 
@@ -79,9 +80,9 @@ export default function AdminLoginPage() {
         </p>
         <p className="mt-2 text-center font-body text-small text-ink/40">
           {/* One-time setup link - can be removed after the real admin account is created */}
-          <a href="/admin/register" className="text-pink/70 hover:underline">
+          <Link href="/admin/register" className="text-pink/70 hover:underline">
             Create admin account
-          </a>
+          </Link>
         </p>
       </div>
     </div>
