@@ -10,7 +10,8 @@
     "typecheck": "tsc --noEmit",
     "db:seed": "ts-node --transpile-only -P tsconfig.seed.json lib/db/seed.ts",
     "db:seed-categories": "ts-node --transpile-only -P tsconfig.seed.json lib/db/seedCategories.ts",
-    "db:clear-mock": "ts-node --transpile-only -P tsconfig.seed.json lib/db/clearMockData.ts"
+    "db:clear-mock": "ts-node --transpile-only -P tsconfig.seed.json lib/db/clearMockData.ts",
+    "db:migrate-stock": "ts-node --transpile-only -P tsconfig.seed.json scripts/migrate-stock-status.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

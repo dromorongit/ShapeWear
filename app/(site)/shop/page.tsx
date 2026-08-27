@@ -9,7 +9,7 @@ export const metadata: Metadata = {
   description: 'Browse the full Shapewear Closet catalog. Waist trainers, body shapers, tummy control, and more.',
 }
 
-export const revalidate = 3600
+export const dynamic = 'force-dynamic'
 
 const ShopPage = async ({ searchParams }: { searchParams: { category?: string } }) => {
   const selectedCategory = searchParams.category || ''

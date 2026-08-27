@@ -54,6 +54,7 @@ interface RawProductFull {
   shapes: string[]
   sizes: string[]
   variants: IProductVariant[]
+  stock: number
   stockStatus: StockStatus
   isFeatured: boolean
   isActive: boolean
@@ -98,6 +99,7 @@ function toProduct(doc: RawProductFull): MockProduct {
     shapes: doc.shapes,
     sizes: doc.sizes,
     variants: doc.variants,
+    stock: doc.stock,
     stockStatus: doc.stockStatus,
     isFeatured: doc.isFeatured,
     isActive: doc.isActive,

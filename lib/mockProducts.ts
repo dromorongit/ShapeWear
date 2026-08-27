@@ -19,6 +19,7 @@ export interface MockProduct {
   shapes: string[]
   sizes: string[]
   variants: ProductVariant[]
+  stock: number
   stockStatus: 'in-stock' | 'low-stock' | 'out-of-stock'
   isFeatured: boolean
   isActive: boolean

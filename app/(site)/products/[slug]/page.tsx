@@ -101,14 +101,23 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
 
              <p className="mt-4 font-body text-small text-ink/50">Category: {product.category}</p>
 
-               <div className="mt-6">
-                <VariantSelector
-                  shapes={product.shapes}
-                  sizes={product.sizes}
-                  variants={product.variants}
-                  product={product}
-                />
-              </div>
+                <div className="mt-6">
+                 <VariantSelector
+                   shapes={product.shapes}
+                   sizes={product.sizes}
+                   variants={product.variants}
+                   product={{
+                     id: product.id,
+                     slug: product.slug,
+                     name: product.name,
+                     mainImage: product.mainImage,
+                     price: product.price,
+                     salePrice: product.salePrice,
+                     stock: product.stock,
+                     stockStatus: product.stockStatus,
+                   }}
+                 />
+               </div>
           </div>
         </div>
       </div>

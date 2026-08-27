@@ -16,13 +16,15 @@ interface VariantSelectorProps {
     mainImage: string
     price: number
     salePrice: number | null
+    stock?: number
+    stockStatus?: string
   }
 }
 
 type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock'
 
 const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorProps) => {
-  const firstInStockVariant = variants.find((v) => v.stock > 0)
+  const firstInStockVariant = variants.find((v) => v.stock > 0) || (product?.stock && product.stock > 0 ? variants[0] : undefined)
   const defaultShape = firstInStockVariant?.shape ?? shapes[0] ?? ''
   const defaultSize = firstInStockVariant?.size ?? sizes[0] ?? ''
   const [selectedShape, setSelectedShape] = useState<string>(defaultShape)
@@ -37,6 +39,12 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
 
   const getVariant = (shape: string, size: string) => variantMap.get(`${shape}-${size}`)
 
+  const getVariantStock = (variant?: ProductVariant) => {
+    if (variant && variant.stock > 0) return variant.stock
+    if (product?.stock && product.stock > 0) return product.stock
+    return 0
+  }
+
   const getStockStatus = (stock: number): StockStatus => {
     if (stock === 0) return 'out-of-stock'
     if (stock <= 3) return 'low-stock'
@@ -44,7 +52,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
   }
 
   const currentVariant = getVariant(selectedShape, selectedSize)
-  const currentStock = currentVariant?.stock ?? 0
+  const currentStock = getVariantStock(currentVariant)
   const currentStatus = getStockStatus(currentStock)
   const isOutOfStock = currentStatus === 'out-of-stock'
   const isLowStock = currentStatus === 'low-stock'
@@ -101,7 +109,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
         <div className="flex flex-wrap gap-2">
           {sizes.map((size) => {
             const variant = getVariant(selectedShape, size)
-            const isDisabled = !variant || variant.stock === 0
+            const isDisabled = !variant || getVariantStock(variant) === 0
 
             return (
               <button
