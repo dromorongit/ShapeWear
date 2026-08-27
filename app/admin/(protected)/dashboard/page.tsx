@@ -3,7 +3,7 @@ import Product from '@/lib/db/models/Product'
 import Review from '@/lib/db/models/Review'
 import Order from '@/lib/db/models/Order'
 import Card from '@/components/ui/Card'
-import Button from '@/components/ui/Button'
+import AdminDashboardActions from './AdminDashboardActions'
 
 export const dynamic = 'force-dynamic'
 
@@ -59,18 +59,7 @@ export default async function AdminDashboardPage() {
           <h3 className="font-display text-lg font-semibold text-ink">
             Quick Actions
           </h3>
-          <div className="mt-4 flex flex-wrap gap-3">
-            <Button variant="secondary" onClick={() => {
-              window.location.href = '/admin/products/new'
-            }}>
-              Add Product
-            </Button>
-            <Button variant="secondary" onClick={() => {
-              window.location.href = '/admin/reviews'
-            }}>
-              Moderate Reviews
-            </Button>
-          </div>
+          <AdminDashboardActions />
         </Card>
       </div>
     </div>
