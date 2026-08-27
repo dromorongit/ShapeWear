@@ -20,11 +20,12 @@ export async function middleware(request: NextRequest) {
   const isAdminPage = pathname.startsWith('/admin')
   const isAdminApi = pathname.startsWith('/api/admin')
   const isLoginPage = pathname === '/admin/login'
+  const isRegisterPage = pathname === '/admin/register'
   const isLoginApi = pathname === '/api/admin/auth/login'
   const isRegisterApi = pathname === '/api/admin/auth/register'
 
   if (isAdminPage || isAdminApi) {
-    if (isLoginPage || isLoginApi || isRegisterApi) {
+    if (isLoginPage || isRegisterPage || isLoginApi || isRegisterApi) {
       return response
     }
 
