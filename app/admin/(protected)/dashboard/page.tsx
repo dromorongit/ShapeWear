@@ -1,16 +1,30 @@
-'use client'
-
+import { connectDb } from '@/lib/db/connect'
+import Product from '@/lib/db/models/Product'
+import Review from '@/lib/db/models/Review'
+import Order from '@/lib/db/models/Order'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 
-const stats = [
-  { label: 'Total Products', value: '24' },
-  { label: 'Pending Reviews', value: '3' },
-  { label: 'Total Orders', value: '0' },
-  { label: 'Low Stock Alerts', value: '5' },
-]
+export const dynamic = 'force-dynamic'
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  await connectDb()
+
+  const [totalProducts, pendingReviews, totalOrders, lowStockAlerts] =
+    await Promise.all([
+      Product.countDocuments().exec(),
+      Review.countDocuments({ status: 'pending' }).exec(),
+      Order.countDocuments().exec(),
+      Product.countDocuments({ stockStatus: 'low-stock' }).exec(),
+    ])
+
+  const stats = [
+    { label: 'Total Products', value: String(totalProducts) },
+    { label: 'Pending Reviews', value: String(pendingReviews) },
+    { label: 'Total Orders', value: String(totalOrders) },
+    { label: 'Low Stock Alerts', value: String(lowStockAlerts) },
+  ]
+
   return (
     <div className="space-y-6">
       <div>
