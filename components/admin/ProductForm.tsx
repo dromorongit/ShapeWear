@@ -364,6 +364,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             onChange={(e) => updateField('stock', e.target.value)}
             required
           />
+        </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label className="mb-1.5 block font-body text-small font-medium text-ink">
