@@ -9,15 +9,13 @@ cloudinary.config({
   api_secret: process.env.CLOUDINARY_API_SECRET,
 })
 
-const UPLOAD_TRANSFORMATION = JSON.stringify({ quality: 'auto', format: 'auto' })
-
 export async function GET(request: NextRequest) {
   const auth = await requireAdmin(request)
   if (auth) return auth
 
   const timestamp = Math.round(Date.now() / 1000)
   const signature = cloudinary.utils.api_sign_request(
-    { timestamp, folder: 'shapewear-closet', transformation: UPLOAD_TRANSFORMATION },
+    { timestamp, folder: 'shapewear-closet' },
     process.env.CLOUDINARY_API_SECRET!
   )
 
@@ -27,6 +25,5 @@ export async function GET(request: NextRequest) {
     apiKey: process.env.CLOUDINARY_API_KEY,
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     folder: 'shapewear-closet',
-    transformation: UPLOAD_TRANSFORMATION,
   })
 }
