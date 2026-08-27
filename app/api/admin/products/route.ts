@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const products = await Product.find({})
     .lean()
     .select(
-      'slug name mainImage price salePrice stockStatus variants isActive isFeatured category tags description shortDescription additionalImages shapes sizes'
+      'slug name mainImage price salePrice stock stockStatus variants isActive isFeatured category tags description shortDescription additionalImages shapes sizes'
     )
     .exec()
 
@@ -38,6 +38,7 @@ export async function POST(request: NextRequest) {
     shortDescription,
     price,
     salePrice,
+    stock,
     category,
     mainImage,
     variants,
@@ -52,6 +53,7 @@ export async function POST(request: NextRequest) {
   if (!description) missingFields.push('description')
   if (!shortDescription) missingFields.push('shortDescription')
   if (!price) missingFields.push('price')
+  if (!stock && stock !== 0) missingFields.push('stock')
   if (!category) missingFields.push('category')
   if (!mainImage) missingFields.push('mainImage')
 
@@ -80,6 +82,7 @@ export async function POST(request: NextRequest) {
     shortDescription,
     price: Number(price),
     salePrice: salePrice ? Number(salePrice) : null,
+    stock: Number(stock),
     category,
     mainImage,
     variants: safeVariants,

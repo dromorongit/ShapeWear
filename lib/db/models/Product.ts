@@ -50,6 +50,7 @@ const ProductSchema = new Schema<IProduct>(
     shortDescription: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
     salePrice: { type: Number, min: 0, default: null },
+    stock: { type: Number, required: true, min: 0, default: 0 },
     mainImage: { type: String, required: true },
     additionalImages: { type: [String], default: [] },
     // Stored as plain string matching Category.name for simpler queries at this scale.

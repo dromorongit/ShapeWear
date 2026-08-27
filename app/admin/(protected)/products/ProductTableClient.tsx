@@ -5,14 +5,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
-import Badge from '@/components/ui/Badge'
 import { formatCurrency } from '@/lib/formatCurrency'
-
-const stockStatusVariant = {
-  'in-stock': 'inStock' as const,
-  'low-stock': 'lowStock' as const,
-  'out-of-stock': 'outOfStock' as const,
-}
 
 interface ProductRow {
   id: string
@@ -22,6 +15,7 @@ interface ProductRow {
   category: string
   price: number
   salePrice: number | null
+  stock: number
   stockStatus: string
   isActive: boolean
   isFeatured: boolean
@@ -142,9 +136,9 @@ export default function ProductTableClient({ products }: { products: ProductRow[
                   </span>
                 </td>
                 <td className="px-4 py-4">
-                  <Badge variant={stockStatusVariant[product.stockStatus as keyof typeof stockStatusVariant]}>
-                    {product.stockStatus.replace('-', ' ')}
-                  </Badge>
+                  <span className="font-body text-small text-ink/70">
+                    {product.stock}
+                  </span>
                 </td>
                 <td className="px-4 py-4">
                   <button

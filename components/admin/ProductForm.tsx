@@ -20,6 +20,7 @@ export interface ProductFormData {
   shortDescription: string
   price: string
   salePrice: string
+  stock: string
   category: string
   tags: string
   isFeatured: boolean
@@ -48,6 +49,7 @@ const emptyProduct = (): ProductFormData => ({
   shortDescription: '',
   price: '',
   salePrice: '',
+  stock: '',
   category: '',
   tags: '',
   isFeatured: false,
@@ -254,6 +256,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
       ...form,
       price: Number(form.price),
       salePrice: form.salePrice ? Number(form.salePrice) : null,
+      stock: Number(form.stock),
       tags: form.tags
         .split(',')
         .map((t) => t.trim())
@@ -353,6 +356,14 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             onChange={(e) => updateField('salePrice', e.target.value)}
           />
         </div>
+        <div className="grid gap-5 sm:grid-cols-2">
+          <Input
+            label="Stock"
+            type="number"
+            value={form.stock}
+            onChange={(e) => updateField('stock', e.target.value)}
+            required
+          />
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label className="mb-1.5 block font-body text-small font-medium text-ink">
@@ -573,7 +584,6 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
                       type="button"
                       onClick={() => removeVariant(index)}
                       className="font-body text-small text-red-600 hover:underline"
-                      disabled={form.variants.length === 1}
                     >
                       Remove
                     </button>
