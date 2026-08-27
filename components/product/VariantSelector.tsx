@@ -41,9 +41,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
   const getVariant = (shape: string, size: string) => variantMap.get(`${shape}-${size}`)
 
   const getVariantStock = (variant?: ProductVariant) => {
-    if (variant && variant.stock > 0) return variant.stock
-    if (product?.stock && product.stock > 0) return product.stock
-    return 0
+    return variant?.stock ?? 0
   }
 
   const getStockStatus = (stock: number): StockStatus => {
