@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useMemo } from 'react'
 import Badge from '@/components/ui/Badge'
 import { useCart } from '@/context/CartContext'
 import { ProductVariant } from '@/lib/mockProducts'
@@ -23,31 +23,35 @@ interface VariantSelectorProps {
 
 type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock'
 
+const getStockStatus = (stock: number): StockStatus => {
+  if (stock === 0) return 'out-of-stock'
+  if (stock <= 5) return 'low-stock'
+  return 'in-stock'
+}
+
 const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorProps) => {
-  const defaultVariant = variants.find((v) => v.stock > 0) ?? variants[0]
-  const defaultShape = defaultVariant?.shape ?? shapes[0] ?? ''
-  const defaultSize = defaultVariant?.size ?? sizes[0] ?? ''
-  const [selectedShape, setSelectedShape] = useState<string>(defaultShape)
-  const [selectedSize, setSelectedSize] = useState<string>(defaultSize)
   const [quantity, setQuantity] = useState<number>(1)
   const [cartMessage, setCartMessage] = useState<string | null>(null)
   const { addItem } = useCart()
 
-  const variantMap = new Map<string, ProductVariant>()
-  variants.forEach((v) => {
-    variantMap.set(`${v.shape}-${v.size}`, v)
-  })
+  const defaultVariant = useMemo(() => variants.find((v) => v.stock > 0) ?? variants[0], [variants])
+  const defaultShape = defaultVariant?.shape ?? shapes[0] ?? ''
+  const defaultSize = defaultVariant?.size ?? sizes[0] ?? ''
+  const [selectedShape, setSelectedShape] = useState<string>(defaultShape)
+  const [selectedSize, setSelectedSize] = useState<string>(defaultSize)
+
+  const variantMap = useMemo(() => {
+    const map = new Map<string, ProductVariant>()
+    variants.forEach((v) => {
+      map.set(`${v.shape}-${v.size}`, v)
+    })
+    return map
+  }, [variants])
 
   const getVariant = (shape: string, size: string) => variantMap.get(`${shape}-${size}`)
 
   const getVariantStock = (variant?: ProductVariant) => {
     return variant?.stock ?? 0
-  }
-
-  const getStockStatus = (stock: number): StockStatus => {
-    if (stock === 0) return 'out-of-stock'
-    if (stock <= 5) return 'low-stock'
-    return 'in-stock'
   }
 
   const currentVariant = getVariant(selectedShape, selectedSize)
@@ -90,22 +94,82 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
     }
   }, [currentVariant, shapes, sizes, variants])
 
-  const handleAddToCart = () => {
-    if (isAddToCartDisabled) return
+  const handleAddToCart = (sku: string, shape?: string, size?: string, stock?: number) => {
+    const currentStock = stock ?? 0
+    const currentStatus = getStockStatus(currentStock)
+    if (currentStatus === 'out-of-stock' || !product) return
+
     addItem({
       productId: product.id,
       slug: product.slug,
       name: product.name,
       mainImage: product.mainImage,
-      shape: selectedShape,
-      size: selectedSize,
-      sku: currentVariant.sku,
+      shape,
+      size,
+      sku,
       price: product.salePrice ?? product.price,
       quantity,
     })
-    setCartMessage(`Added ${selectedShape} / ${selectedSize} to cart`)
+    const label = shape && size ? `${shape} / ${size}` : 'Item'
+    setCartMessage(`Added ${label} to cart`)
     setTimeout(() => setCartMessage(null), 3000)
     setQuantity(1)
+  }
+
+  if (variants.length === 0) {
+    const simpleStock = product?.stock ?? 0
+    const simpleStatus = getStockStatus(simpleStock)
+    const isSimpleOutOfStock = simpleStatus === 'out-of-stock'
+
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center gap-3">
+          <Badge variant={simpleStatus === 'in-stock' ? 'inStock' : simpleStatus === 'low-stock' ? 'lowStock' : 'outOfStock'}>
+            {simpleStatus === 'in-stock' ? 'In Stock' : simpleStatus === 'low-stock' ? 'Low Stock' : 'Out of Stock'}
+          </Badge>
+          {!isSimpleOutOfStock && (
+            <span className="font-body text-small text-ink/60">{simpleStock} available</span>
+          )}
+        </div>
+
+        <div className="flex items-center gap-3">
+          <label className="font-body text-small font-medium text-ink">Quantity</label>
+          <div className="flex items-center rounded-md border border-ink/10 bg-white">
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+              disabled={quantity <= 1 || isSimpleOutOfStock}
+              className="px-3 py-2 font-body text-small text-ink hover:bg-blush disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
+            >
+              -
+            </button>
+            <span className="px-4 py-2 font-mono text-small text-ink min-w-[3rem] text-center">{quantity}</span>
+            <button
+              type="button"
+              onClick={() => setQuantity((q) => Math.min(simpleStock, q + 1))}
+              disabled={quantity >= simpleStock || isSimpleOutOfStock}
+              className="px-3 py-2 font-body text-small text-ink hover:bg-blush disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
+            >
+              +
+            </button>
+          </div>
+        </div>
+
+        <div>
+          <button
+            type="button"
+            onClick={() => handleAddToCart(product?.slug ?? '', undefined, undefined, simpleStock)}
+            disabled={isSimpleOutOfStock || !product}
+            className="w-full rounded-md bg-pink px-6 py-3 font-body text-base font-medium text-white transition-colors hover:bg-pink/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
+          >
+            {isSimpleOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+          </button>
+          {cartMessage && (
+            <p className="mt-2 font-body text-small text-pink">{cartMessage}</p>
+          )}
+        </div>
+      </div>
+    )
   }
 
   const handleShapeChange = (shape: string) => {
@@ -218,7 +282,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
       <div>
         <button
           type="button"
-          onClick={handleAddToCart}
+          onClick={() => handleAddToCart(currentVariant?.sku ?? '', selectedShape, selectedSize, currentStock)}
           disabled={isAddToCartDisabled}
           className="w-full rounded-md bg-pink px-6 py-3 font-body text-base font-medium text-white transition-colors hover:bg-pink/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
         >

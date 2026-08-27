@@ -41,16 +41,18 @@ const CartPage = () => {
                         sizes="80px"
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-body text-body font-medium text-ink truncate">
-                        {item.name}
-                      </p>
-                      <p className="font-body text-small text-ink/60">
-                        {item.shape} / {item.size}
-                      </p>
-                       <p className="font-mono text-small text-ink">
-                         {formatCurrency(item.price)}
-                       </p>
+                      <div className="flex-1 min-w-0">
+                        <p className="font-body text-body font-medium text-ink truncate">
+                          {item.name}
+                        </p>
+                        {item.shape && item.size && (
+                          <p className="font-body text-small text-ink/60">
+                            {item.shape} / {item.size}
+                          </p>
+                        )}
+                         <p className="font-mono text-small text-ink">
+                          {formatCurrency(item.price)}
+                        </p>
                       <div className="mt-2 flex items-center gap-3">
                         <div className="flex items-center gap-2">
                           <button

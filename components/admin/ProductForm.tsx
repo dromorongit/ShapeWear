@@ -54,7 +54,7 @@ const emptyProduct = (): ProductFormData => ({
   tags: '',
   isFeatured: false,
   isActive: true,
-  variants: [emptyVariant()],
+  variants: [],
   mainImage: null,
   additionalImages: [],
 })
@@ -69,6 +69,7 @@ interface ProductFormProps {
 
 export default function ProductForm({ initialData, productId }: ProductFormProps) {
   const [form, setForm] = useState<ProductFormData>(initialData ?? emptyProduct())
+  const [hasVariants, setHasVariants] = useState(initialData ? initialData.variants.length > 0 : false)
   const [mainPreview, setMainPreview] = useState<string | null>(initialData?.mainImage ?? null)
   const [additionalPreviews, setAdditionalPreviews] = useState<string[]>(
     initialData?.additionalImages ?? []
@@ -88,6 +89,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
       setForm(initialData)
       setMainPreview(initialData.mainImage)
       setAdditionalPreviews(initialData.additionalImages)
+      setHasVariants(initialData.variants.length > 0)
     }
   }, [initialData])
 
@@ -126,6 +128,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
   }
 
   const addVariant = () => {
+    if (!hasVariants) return
     updateField('variants', [...form.variants, emptyVariant()])
   }
 
@@ -246,7 +249,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
       return
     }
 
-    const invalidVariant = form.variants.find((v) => !v.sku.trim() || !v.shape || !v.size)
+    const invalidVariant = hasVariants ? form.variants.find((v) => !v.sku.trim() || !v.shape || !v.size) : undefined
     if (invalidVariant) {
       setErrorMessage('Each variant must have a SKU, shape, and size.')
       return
@@ -261,6 +264,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
         .split(',')
         .map((t) => t.trim())
         .filter(Boolean),
+      variants: hasVariants ? form.variants : [],
     }
 
     const url = productId ? `/api/admin/products/${productId}` : '/api/admin/products'
@@ -295,7 +299,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
       }
     })
   })
-  const hasIncompleteCoverage = missingCombinations.length > 0 && variantShapes.length > 0 && variantSizes.length > 0
+  const hasIncompleteCoverage = hasVariants && missingCombinations.length > 0 && variantShapes.length > 0 && variantSizes.length > 0
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
@@ -369,15 +373,31 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
             onChange={(e) => updateField('salePrice', e.target.value)}
           />
         </div>
-        <div className="grid gap-5 sm:grid-cols-2">
-          <Input
-            label="Stock"
-            type="number"
-            value={form.stock}
-            onChange={(e) => updateField('stock', e.target.value)}
-            required
+        <label className="flex items-center gap-3 rounded-md border border-ink/10 bg-white p-4">
+          <input
+            type="checkbox"
+            checked={hasVariants}
+            onChange={(e) => setHasVariants(e.target.checked)}
+            className="h-5 w-5 rounded border-ink/20 text-pink focus:ring-pink"
           />
-        </div>
+          <div>
+            <span className="font-body text-body font-medium text-ink">This product has shape/size variants</span>
+            <p className="font-body text-small text-ink/60">
+              {hasVariants ? 'Variants enabled — stock is managed per shape/size combination below.' : 'Simple product — only a single stock number is needed.'}
+            </p>
+          </div>
+        </label>
+        {!hasVariants && (
+          <div className="grid gap-5 sm:grid-cols-2">
+            <Input
+              label="Stock"
+              type="number"
+              value={form.stock}
+              onChange={(e) => updateField('stock', e.target.value)}
+              required
+            />
+          </div>
+        )}
         <div className="grid gap-5 sm:grid-cols-2">
           <div>
             <label className="mb-1.5 block font-body text-small font-medium text-ink">
@@ -536,10 +556,11 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
         </div>
       </Card>
 
-      <Card className="p-5 space-y-5">
-        <h3 className="font-display text-lg font-semibold text-ink">
-          Variants
-        </h3>
+      {hasVariants && (
+        <Card className="p-5 space-y-5">
+          <h3 className="font-display text-lg font-semibold text-ink">
+            Variants
+          </h3>
         <div className="overflow-x-auto">
           <table className="w-full min-w-[600px] text-left">
             <thead>
@@ -610,15 +631,16 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
         <Button type="button" variant="secondary" onClick={addVariant}>
           Add Variant Row
         </Button>
-        {hasIncompleteCoverage && (
-          <div className="mt-3 rounded-md bg-amber-50 p-3 font-body text-small text-amber-700">
-            <span className="font-medium">Note:</span> Some shape/size combinations are missing variant rows:{' '}
-            {missingCombinations.slice(0, 3).join(', ')}
-            {missingCombinations.length > 3 && ` and ${missingCombinations.length - 3} more`}.
-            Customers selecting these will see &quot;Combination Not Available&quot;.
-          </div>
-        )}
-      </Card>
+         {hasIncompleteCoverage && (
+           <div className="mt-3 rounded-md bg-amber-50 p-3 font-body text-small text-amber-700">
+             <span className="font-medium">Note:</span> Some shape/size combinations are missing variant rows:{' '}
+             {missingCombinations.slice(0, 3).join(', ')}
+             {missingCombinations.length > 3 && ` and ${missingCombinations.length - 3} more`}.
+             Customers selecting these will see &quot;Combination Not Available&quot;.
+           </div>
+         )}
+       </Card>
+      )}
 
       <div className="flex items-center justify-end gap-3">
         <Button

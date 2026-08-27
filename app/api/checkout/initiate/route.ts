@@ -46,39 +46,62 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: `Invalid item: ${JSON.stringify(item)}` }, { status: 400 })
       }
 
-      const product = await Product.findOne({ 'variants.sku': item.sku, isActive: true }).lean().exec()
+      let product = await Product.findOne({ 'variants.sku': item.sku, isActive: true }).lean().exec()
+      let variant = product?.variants.find((v: { sku: string }) => v.sku === item.sku)
+
+      if (!product) {
+        product = await Product.findOne({ slug: item.sku, isActive: true, variants: { $size: 0 } }).lean().exec()
+        variant = undefined
+      }
 
       if (!product) {
         return NextResponse.json({ error: `Product not found for SKU: ${item.sku}` }, { status: 400 })
       }
 
-      const variant = product.variants.find((v) => v.sku === item.sku)
-
-      if (!variant) {
-        return NextResponse.json({ error: `Variant not found for SKU: ${item.sku}` }, { status: 400 })
-      }
-
-      if (variant.stock < item.quantity) {
-        return NextResponse.json(
-          { error: `Insufficient stock for ${product.name} (${variant.shape}/${variant.size}). Only ${variant.stock} left.` },
-          { status: 400 }
-        )
-      }
-
       const effectivePrice = product.salePrice ?? product.price
-      computedSubtotal += effectivePrice * item.quantity
 
-      validatedItems.push({
-        productId: product._id.toString(),
-        productName: product.name,
-        slug: product.slug,
-        mainImage: product.mainImage,
-        shape: variant.shape,
-        size: variant.size,
-        sku: variant.sku,
-        price: effectivePrice,
-        quantity: item.quantity,
-      })
+      if (variant) {
+        if (variant.stock < item.quantity) {
+          return NextResponse.json(
+            { error: `Insufficient stock for ${product.name} (${variant.shape}/${variant.size}). Only ${variant.stock} left.` },
+            { status: 400 }
+          )
+        }
+
+        validatedItems.push({
+          productId: product._id.toString(),
+          productName: product.name,
+          slug: product.slug,
+          mainImage: product.mainImage,
+          shape: variant.shape,
+          size: variant.size,
+          sku: variant.sku,
+          price: effectivePrice,
+          quantity: item.quantity,
+        })
+      } else {
+        const simpleStock = Number(product.stock) || 0
+        if (simpleStock < item.quantity) {
+          return NextResponse.json(
+            { error: `Insufficient stock for ${product.name}. Only ${simpleStock} left.` },
+            { status: 400 }
+          )
+        }
+
+        validatedItems.push({
+          productId: product._id.toString(),
+          productName: product.name,
+          slug: product.slug,
+          mainImage: product.mainImage,
+          shape: undefined,
+          size: undefined,
+          sku: product.slug,
+          price: effectivePrice,
+          quantity: item.quantity,
+        })
+      }
+
+      computedSubtotal += effectivePrice * item.quantity
     }
 
     if (Math.abs(computedSubtotal - subtotal) > 0.01) {

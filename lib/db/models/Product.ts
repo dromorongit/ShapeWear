@@ -76,9 +76,14 @@ const ProductSchema = new Schema<IProduct>(
 
 ProductSchema.index({ isActive: 1, isFeatured: 1 })
 
+// Two product modes are supported:
+// 1. Variant-based: shapes/sizes/variants populated, top-level stock is ignored/unused in storefront.
+// 2. Simple: shapes/sizes/variants empty, top-level stock is authoritative for availability.
 ProductSchema.pre<IProduct>('save', function () {
   if (!this.isModified('variants') && !this.isModified('stock')) return
-  const totalStock = (Number(this.stock) || 0) + this.variants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0)
+  const totalStock = this.variants.length > 0
+    ? (Number(this.stock) || 0) + this.variants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0)
+    : (Number(this.stock) || 0)
   if (totalStock === 0) {
     this.stockStatus = 'out-of-stock'
   } else if (totalStock <= 5) {

@@ -7,8 +7,8 @@ export interface CartItem {
   slug: string
   name: string
   mainImage: string
-  shape: string
-  size: string
+  shape?: string
+  size?: string
   sku: string
   price: number
   quantity: number

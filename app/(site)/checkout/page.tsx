@@ -203,14 +203,16 @@ const CheckoutPage = () => {
                         sizes="48px"
                       />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="font-body text-body font-medium text-ink truncate">
-                        {item.name}
-                      </p>
-                      <p className="font-body text-small text-ink/60">
-                        {item.shape} / {item.size} x {item.quantity}
-                      </p>
-                    </div>
+                     <div className="flex-1 min-w-0">
+                       <p className="font-body text-body font-medium text-ink truncate">
+                         {item.name}
+                       </p>
+                       {item.shape && item.size && (
+                         <p className="font-body text-small text-ink/60">
+                           {item.shape} / {item.size} x {item.quantity}
+                         </p>
+                       )}
+                     </div>
                      <p className="font-mono text-small text-ink">
                        {formatCurrency(item.price * item.quantity)}
                      </p>

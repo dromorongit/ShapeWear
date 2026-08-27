@@ -113,7 +113,10 @@ function OrderConfirmationContent() {
   const displaySubtotal = orderStatus?.subtotal ?? subtotal
 
   const whatsappMessage = encodeURIComponent(
-    `Hello ${BUSINESS_NAME}, I just placed an order.\n\nOrder ID: ${orderStatus?.orderId || reference}\n\nItems:\n${displayItems.map(item => `- ${item.productName} (${item.shape}/${item.size}) x${item.quantity} = ${formatCurrency(item.price * item.quantity)}`).join('\n')}\n\nSubtotal: ${formatCurrency(displaySubtotal)}\n\nDelivery to: ${orderStatus?.deliveryAddress || deliveryDetails?.deliveryAddress || 'N/A'}\n\nPlease confirm my order.`
+    `Hello ${BUSINESS_NAME}, I just placed an order.\n\nOrder ID: ${orderStatus?.orderId || reference}\n\nItems:\n${displayItems.map(item => {
+      const variant = item.shape && item.size ? ` (${item.shape}/${item.size})` : ''
+      return `- ${item.productName}${variant} x${item.quantity} = ${formatCurrency(item.price * item.quantity)}`
+    }).join('\n')}\n\nSubtotal: ${formatCurrency(displaySubtotal)}\n\nDelivery to: ${orderStatus?.deliveryAddress || deliveryDetails?.deliveryAddress || 'N/A'}\n\nPlease confirm my order.`
   )
 
   const whatsappUrl = `https://wa.me/${PHONE}?text=${whatsappMessage}`
@@ -160,14 +163,16 @@ function OrderConfirmationContent() {
                           sizes="48px"
                         />
                       </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="font-body text-body font-medium text-ink truncate">
-                          {item.productName}
-                        </p>
-                        <p className="font-body text-small text-ink/60">
-                          {item.shape} / {item.size} x {item.quantity}
-                        </p>
-                      </div>
+                       <div className="flex-1 min-w-0">
+                         <p className="font-body text-body font-medium text-ink truncate">
+                           {item.productName}
+                         </p>
+                         {item.shape && item.size && (
+                           <p className="font-body text-small text-ink/60">
+                             {item.shape} / {item.size} x {item.quantity}
+                           </p>
+                         )}
+                       </div>
                        <p className="font-mono text-small text-ink">
                          {formatCurrency(item.price * item.quantity)}
                        </p>

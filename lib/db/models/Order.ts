@@ -5,8 +5,8 @@ export interface IOrderItem {
   productName: string
   slug: string
   mainImage: string
-  shape: string
-  size: string
+  shape?: string
+  size?: string
   sku: string
   price: number
   quantity: number
@@ -42,8 +42,8 @@ const OrderItemSchema = new Schema<IOrderItem>(
     productName: { type: String, required: true },
     slug: { type: String, required: true },
     mainImage: { type: String, required: true },
-    shape: { type: String, required: true },
-    size: { type: String, required: true },
+    shape: { type: String },
+    size: { type: String },
     sku: { type: String, required: true },
     price: { type: Number, required: true, min: 0 },
     quantity: { type: Number, required: true, min: 1 },
