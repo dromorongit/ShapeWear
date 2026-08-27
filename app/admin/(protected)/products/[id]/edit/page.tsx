@@ -25,6 +25,7 @@ export default async function AdminEditProductPage({
     shortDescription: product.shortDescription,
     price: String(product.price),
     salePrice: product.salePrice ? String(product.salePrice) : '',
+    stock: String(product.stock),
     category: product.category,
     tags: product.tags.join(', '),
     isFeatured: product.isFeatured,
