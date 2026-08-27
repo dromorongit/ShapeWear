@@ -236,6 +236,11 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
     setErrorMessage('')
     setSuccessMessage('')
 
+    if (!form.mainImage) {
+      setErrorMessage('Please upload a main image before saving.')
+      return
+    }
+
     const payload = {
       ...form,
       price: Number(form.price),
