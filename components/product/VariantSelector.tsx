@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import Badge from '@/components/ui/Badge'
 import { useCart } from '@/context/CartContext'
 import { ProductVariant } from '@/lib/mockProducts'
@@ -24,11 +24,12 @@ interface VariantSelectorProps {
 type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock'
 
 const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorProps) => {
-  const firstInStockVariant = variants.find((v) => v.stock > 0) || (product?.stock && product.stock > 0 ? variants[0] : undefined)
+  const firstInStockVariant = variants.find((v) => v.stock > 0)
   const defaultShape = firstInStockVariant?.shape ?? shapes[0] ?? ''
   const defaultSize = firstInStockVariant?.size ?? sizes[0] ?? ''
   const [selectedShape, setSelectedShape] = useState<string>(defaultShape)
   const [selectedSize, setSelectedSize] = useState<string>(defaultSize)
+  const [quantity, setQuantity] = useState<number>(1)
   const [cartMessage, setCartMessage] = useState<string | null>(null)
   const { addItem } = useCart()
 
@@ -57,6 +58,16 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
   const isOutOfStock = currentStatus === 'out-of-stock'
   const isLowStock = currentStatus === 'low-stock'
 
+  useEffect(() => {
+    if (!currentVariant && shapes.length > 0 && sizes.length > 0) {
+      const fallback = variants.find((v) => v.stock > 0) || variants[0]
+      if (fallback) {
+        setSelectedShape(fallback.shape)
+        setSelectedSize(fallback.size)
+      }
+    }
+  }, [currentVariant, shapes, sizes, variants])
+
   const handleAddToCart = () => {
     if (isOutOfStock || !currentVariant || !product) return
     addItem({
@@ -68,9 +79,11 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
       size: selectedSize,
       sku: currentVariant.sku,
       price: product.salePrice ?? product.price,
+      quantity,
     })
     setCartMessage(`Added ${selectedShape} / ${selectedSize} to cart`)
     setTimeout(() => setCartMessage(null), 3000)
+    setQuantity(1)
   }
 
   const handleShapeChange = (shape: string) => {
@@ -80,6 +93,12 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
       return variant !== undefined && variant.stock > 0
     }) ?? sizes[0] ?? ''
     setSelectedSize(inStockSize)
+    setQuantity(1)
+  }
+
+  const handleSizeChange = (size: string) => {
+    setSelectedSize(size)
+    setQuantity(1)
   }
 
   return (
@@ -109,13 +128,13 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
         <div className="flex flex-wrap gap-2">
           {sizes.map((size) => {
             const variant = getVariant(selectedShape, size)
-            const isDisabled = !variant || getVariantStock(variant) === 0
+            const isDisabled = !variant || variant.stock === 0
 
             return (
               <button
                 key={size}
                 type="button"
-                onClick={() => !isDisabled && setSelectedSize(size)}
+                onClick={() => !isDisabled && handleSizeChange(size)}
                 disabled={isDisabled}
                 className={`rounded-pill px-4 py-2 font-body text-small transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 ${
                   selectedSize === size && !isDisabled
@@ -136,9 +155,32 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
         <Badge variant={currentStatus === 'in-stock' ? 'inStock' : currentStatus === 'low-stock' ? 'lowStock' : 'outOfStock'}>
           {currentStatus === 'in-stock' ? 'In Stock' : currentStatus === 'low-stock' ? 'Low Stock' : 'Out of Stock'}
         </Badge>
-        {isLowStock && currentStock > 0 && (
-          <span className="font-body text-small text-ink/60">Only {currentStock} left</span>
+        {!isOutOfStock && (
+          <span className="font-body text-small text-ink/60">{currentStock} available</span>
         )}
+      </div>
+
+      <div className="flex items-center gap-3">
+        <label className="font-body text-small font-medium text-ink">Quantity</label>
+        <div className="flex items-center rounded-md border border-ink/10 bg-white">
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.max(1, q - 1))}
+            disabled={quantity <= 1}
+            className="px-3 py-2 font-body text-small text-ink hover:bg-blush disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
+          >
+            -
+          </button>
+          <span className="px-4 py-2 font-mono text-small text-ink min-w-[3rem] text-center">{quantity}</span>
+          <button
+            type="button"
+            onClick={() => setQuantity((q) => Math.min(currentStock, q + 1))}
+            disabled={quantity >= currentStock || isOutOfStock}
+            className="px-3 py-2 font-body text-small text-ink hover:bg-blush disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
+          >
+            +
+          </button>
+        </div>
       </div>
 
       <p className="font-body text-small text-ink/60">
