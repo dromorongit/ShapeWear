@@ -10,7 +10,7 @@ export default async function AdminProductsPage() {
   const products = await Product.find({})
     .lean()
     .select(
-      'slug name mainImage price salePrice stockStatus variants isActive isFeatured category tags'
+      'slug name mainImage price salePrice stock stockStatus variants isActive isFeatured category tags'
     )
     .exec()
 
