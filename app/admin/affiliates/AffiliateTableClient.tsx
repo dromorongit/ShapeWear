@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 interface AffiliateRow {
   id: string
@@ -112,18 +113,18 @@ export default function AffiliateTableClient({ affiliates }: { affiliates: Affil
                     </span>
                   </td>
                   <td className="px-4 py-4">
-                    <span className="font-body text-small text-ink/70">
-                      GHS {affiliate.totalCommissionEarned.toFixed(2)}
-                    </span>
+                  <span className="font-body text-small text-ink/70">
+                    {formatCurrency(affiliate.totalCommissionEarned)}
+                  </span>
                   </td>
                   <td className="px-4 py-4">
-                    <span className="font-body text-small text-ink/70">
-                      GHS {affiliate.totalCommissionPaid.toFixed(2)}
-                    </span>
+                  <span className="font-body text-small text-ink/70">
+                    {formatCurrency(affiliate.totalCommissionPaid)}
+                  </span>
                   </td>
                   <td className="px-4 py-4">
                     <span className={`font-body text-small font-medium ${balance > 0 ? 'text-gold' : 'text-ink/50'}`}>
-                      GHS {balance.toFixed(2)}
+                      {formatCurrency(balance)}
                     </span>
                   </td>
                   <td className="px-4 py-4">

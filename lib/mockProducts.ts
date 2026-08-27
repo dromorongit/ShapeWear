@@ -23,6 +23,8 @@ export interface MockProduct {
   isFeatured: boolean
   isActive: boolean
   tags: string[]
+  averageRating: number
+  reviewCount: number
 }
 
 export const mockProducts: MockProduct[] = [
@@ -56,6 +58,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: true,
     isActive: true,
     tags: ['bestseller', 'waist', 'seamless'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '2',
@@ -84,6 +88,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: true,
     isActive: true,
     tags: ['sale', 'seamless', 'all-in-one'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '3',
@@ -114,6 +120,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: true,
     isActive: true,
     tags: ['waist', 'back-support', 'structured'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '4',
@@ -144,6 +152,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: false,
     isActive: true,
     tags: ['butt-lifter', 'hip-pads', 'curve'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '5',
@@ -172,6 +182,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: true,
     isActive: true,
     tags: ['sale', 'bodysuit', 'thong-back'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '6',
@@ -198,6 +210,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: true,
     isActive: true,
     tags: ['premium', 'fajas', 'compression'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '7',
@@ -229,6 +243,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: false,
     isActive: true,
     tags: ['sale', 'leggings', 'everyday'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '8',
@@ -254,6 +270,8 @@ export const mockProducts: MockProduct[] = [
     isFeatured: false,
     isActive: true,
     tags: ['postpartum', 'gentle', 'recovery'],
+    averageRating: 0,
+    reviewCount: 0,
   },
   {
     id: '9',
@@ -280,5 +298,7 @@ export const mockProducts: MockProduct[] = [
     isFeatured: false,
     isActive: true,
     tags: ['sale', 'sports', 'high-impact'],
+    averageRating: 0,
+    reviewCount: 0,
   },
 ]

@@ -9,7 +9,8 @@
     "lint": "next lint",
     "typecheck": "tsc --noEmit",
     "db:seed": "ts-node --transpile-only -P tsconfig.seed.json lib/db/seed.ts",
-    "db:seed-categories": "ts-node --transpile-only -P tsconfig.seed.json lib/db/seedCategories.ts"
+    "db:seed-categories": "ts-node --transpile-only -P tsconfig.seed.json lib/db/seedCategories.ts",
+    "db:clear-mock": "ts-node --transpile-only -P tsconfig.seed.json lib/db/clearMockData.ts"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",

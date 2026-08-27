@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Input from '@/components/ui/Input'
 import { useCart } from '@/context/CartContext'
 import Image from 'next/image'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 interface FormErrors {
   fullName?: string
@@ -210,15 +211,15 @@ const CheckoutPage = () => {
                         {item.shape} / {item.size} x {item.quantity}
                       </p>
                     </div>
-                    <p className="font-mono text-small text-ink">
-                      GHS {item.price * item.quantity}
-                    </p>
+                     <p className="font-mono text-small text-ink">
+                       {formatCurrency(item.price * item.quantity)}
+                     </p>
                   </li>
                 ))}
               </ul>
               <div className="mt-4 flex items-center justify-between border-t border-ink/5 pt-4">
                 <span className="font-body text-body font-medium text-ink">Subtotal</span>
-                <span className="font-mono text-price text-ink">GHS {subtotal}</span>
+                 <span className="font-mono text-price text-ink">{formatCurrency(subtotal)}</span>
               </div>
             </div>
 

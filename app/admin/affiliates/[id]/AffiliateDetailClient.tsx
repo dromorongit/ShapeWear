@@ -5,6 +5,7 @@ import Link from 'next/link'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 interface AffiliateRow {
   id: string
@@ -107,7 +108,7 @@ export default function AffiliateDetailClient({
     }
 
     if (amount > balance) {
-      setPayoutWarning(`Amount exceeds pending balance (GHS ${balance.toFixed(2)})`)
+      setPayoutWarning(`Amount exceeds pending balance (${formatCurrency(balance)})`)
     }
 
     setLoading(true)
@@ -171,13 +172,13 @@ export default function AffiliateDetailClient({
         <Card className="p-4">
           <p className="font-body text-small text-ink/60">Commission Earned</p>
           <p className="mt-1 font-display text-2xl font-semibold text-gold">
-            GHS {affiliate.totalCommissionEarned.toFixed(2)}
+            {formatCurrency(affiliate.totalCommissionEarned)}
           </p>
         </Card>
         <Card className="p-4">
           <p className="font-body text-small text-ink/60">Pending Balance</p>
           <p className={`mt-1 font-display text-2xl font-semibold ${balance > 0 ? 'text-pink' : 'text-ink/40'}`}>
-            GHS {balance.toFixed(2)}
+            {formatCurrency(balance)}
           </p>
         </Card>
       </div>
@@ -251,7 +252,7 @@ export default function AffiliateDetailClient({
           <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
             <div className="flex-1">
               <label className="block font-body text-small font-medium text-ink/70 mb-1">
-                Amount (GHS)
+                 Amount (GH₵)
               </label>
               <input
                 type="number"
@@ -265,9 +266,9 @@ export default function AffiliateDetailClient({
                 placeholder="0.00"
                 className="h-10 w-full rounded-md border border-ink/10 px-3 font-body text-body text-ink"
               />
-              <p className="mt-1 font-body text-small text-ink/50">
-                Pending balance: GHS {balance.toFixed(2)}
-              </p>
+               <p className="mt-1 font-body text-small text-ink/50">
+                 Pending balance: {formatCurrency(balance)}
+               </p>
             </div>
             <div className="flex-1">
               <label className="block font-body text-small font-medium text-ink/70 mb-1">
@@ -330,7 +331,7 @@ export default function AffiliateDetailClient({
                   </td>
                   <td className="px-6 py-4">
                     <span className="font-body text-small font-medium text-ink">
-                      GHS {payout.amount.toFixed(2)}
+                      {formatCurrency(payout.amount)}
                     </span>
                   </td>
                   <td className="px-6 py-4">

@@ -11,6 +11,7 @@ import {
   getAllActiveProducts,
 } from '@/lib/db/queries/products'
 import { BUSINESS_NAME } from '@/lib/constants'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 export const revalidate = 3600
 
@@ -85,16 +86,16 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
           <div>
             <h1 className="font-display text-h1 font-semibold text-ink">{product.name}</h1>
 
-            <div className="mt-4 flex items-baseline gap-3">
-              {product.salePrice ? (
-                <>
-                  <span className="font-mono text-price text-ink">GHS {product.salePrice}</span>
-                  <span className="font-mono text-small text-ink/50 line-through">GHS {product.price}</span>
-                </>
-              ) : (
-                <span className="font-mono text-price text-ink">GHS {product.price}</span>
-              )}
-            </div>
+             <div className="mt-4 flex items-baseline gap-3">
+               {product.salePrice ? (
+                 <>
+                   <span className="font-mono text-price text-ink">{formatCurrency(product.salePrice)}</span>
+                   <span className="font-mono text-small text-ink/50 line-through">{formatCurrency(product.price)}</span>
+                 </>
+               ) : (
+                 <span className="font-mono text-price text-ink">{formatCurrency(product.price)}</span>
+               )}
+             </div>
 
              <p className="mt-4 font-body text-body text-ink/70">{product.description}</p>
 

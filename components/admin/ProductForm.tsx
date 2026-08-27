@@ -326,14 +326,14 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
         </div>
         <div className="grid gap-5 sm:grid-cols-2">
           <Input
-            label="Price (GHS)"
+            label="Price (GH₵)"
             type="number"
             value={form.price}
             onChange={(e) => updateField('price', e.target.value)}
             required
           />
           <Input
-            label="Sale Price (GHS, optional)"
+            label="Sale Price (GH₵, optional)"
             type="number"
             value={form.salePrice}
             onChange={(e) => updateField('salePrice', e.target.value)}

@@ -6,6 +6,7 @@ import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/context/CartContext'
 import { BUSINESS_NAME, PHONE } from '@/lib/constants'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 interface DeliveryDetails {
   fullName: string
@@ -112,7 +113,7 @@ function OrderConfirmationContent() {
   const displaySubtotal = orderStatus?.subtotal ?? subtotal
 
   const whatsappMessage = encodeURIComponent(
-    `Hello ${BUSINESS_NAME}, I just placed an order.\n\nOrder ID: ${orderStatus?.orderId || reference}\n\nItems:\n${displayItems.map(item => `- ${item.productName} (${item.shape}/${item.size}) x${item.quantity} = GHS ${item.price * item.quantity}`).join('\n')}\n\nSubtotal: GHS ${displaySubtotal}\n\nDelivery to: ${orderStatus?.deliveryAddress || deliveryDetails?.deliveryAddress || 'N/A'}\n\nPlease confirm my order.`
+    `Hello ${BUSINESS_NAME}, I just placed an order.\n\nOrder ID: ${orderStatus?.orderId || reference}\n\nItems:\n${displayItems.map(item => `- ${item.productName} (${item.shape}/${item.size}) x${item.quantity} = ${formatCurrency(item.price * item.quantity)}`).join('\n')}\n\nSubtotal: ${formatCurrency(displaySubtotal)}\n\nDelivery to: ${orderStatus?.deliveryAddress || deliveryDetails?.deliveryAddress || 'N/A'}\n\nPlease confirm my order.`
   )
 
   const whatsappUrl = `https://wa.me/${PHONE}?text=${whatsappMessage}`
@@ -167,16 +168,16 @@ function OrderConfirmationContent() {
                           {item.shape} / {item.size} x {item.quantity}
                         </p>
                       </div>
-                      <p className="font-mono text-small text-ink">
-                        GHS {item.price * item.quantity}
-                      </p>
+                       <p className="font-mono text-small text-ink">
+                         {formatCurrency(item.price * item.quantity)}
+                       </p>
                     </li>
                   ))}
                 </ul>
               )}
               <div className="mt-4 flex items-center justify-between border-t border-ink/5 pt-4">
                 <span className="font-body text-body font-medium text-ink">Subtotal</span>
-                <span className="font-mono text-price text-ink">GHS {displaySubtotal}</span>
+                 <span className="font-mono text-price text-ink">{formatCurrency(displaySubtotal)}</span>
               </div>
             </div>
 

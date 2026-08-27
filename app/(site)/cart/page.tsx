@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import Image from 'next/image'
 import { useCart } from '@/context/CartContext'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 const CartPage = () => {
   const { state, removeItem, updateQuantity, subtotal, totalItems } = useCart()
@@ -47,9 +48,9 @@ const CartPage = () => {
                       <p className="font-body text-small text-ink/60">
                         {item.shape} / {item.size}
                       </p>
-                      <p className="font-mono text-small text-ink">
-                        GHS {item.price}
-                      </p>
+                       <p className="font-mono text-small text-ink">
+                         {formatCurrency(item.price)}
+                       </p>
                       <div className="mt-2 flex items-center gap-3">
                         <div className="flex items-center gap-2">
                           <button
@@ -91,7 +92,7 @@ const CartPage = () => {
                 <h2 className="font-display text-h3 font-semibold text-ink mb-4">Order Summary</h2>
                 <div className="flex items-center justify-between">
                   <span className="font-body text-body font-medium text-ink">Subtotal</span>
-                  <span className="font-mono text-price text-ink">GHS {subtotal}</span>
+                  <span className="font-mono text-price text-ink">{formatCurrency(subtotal)}</span>
                 </div>
                 <p className="mt-2 font-body text-small text-ink/50">
                   Shipping and taxes calculated at checkout.

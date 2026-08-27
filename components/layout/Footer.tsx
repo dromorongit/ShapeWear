@@ -34,11 +34,16 @@ const Footer = () => {
                   About
                 </Link>
               </li>
-              <li>
-                <Link href="/contact" className="font-body text-body text-blush/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
-                  Contact
-                </Link>
-              </li>
+               <li>
+                 <Link href="/contact" className="font-body text-body text-blush/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                   Contact
+                 </Link>
+               </li>
+               <li>
+                 <Link href="/affiliate/register" className="font-body text-body text-blush/70 hover:text-pink transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 rounded-sm">
+                   Become an Affiliate
+                 </Link>
+               </li>
             </ul>
           </div>
 

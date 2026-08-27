@@ -14,6 +14,8 @@ export interface ProductCardData {
   salePrice: number | null
   stockStatus: StockStatus
   variants: IProductVariant[]
+  averageRating: number
+  reviewCount: number
 }
 
 interface RawProductCard {
@@ -25,6 +27,8 @@ interface RawProductCard {
   salePrice: number | null
   stockStatus: StockStatus
   variants: IProductVariant[]
+  averageRating: number
+  reviewCount: number
 }
 
 interface RawProductSlug {
@@ -50,11 +54,13 @@ interface RawProductFull {
   isFeatured: boolean
   isActive: boolean
   tags: string[]
+  averageRating: number
+  reviewCount: number
   createdAt: Date
   updatedAt: Date
 }
 
-const CARD_PROJECTION = 'slug name mainImage price salePrice stockStatus variants'
+const CARD_PROJECTION = 'slug name mainImage price salePrice stockStatus variants averageRating reviewCount'
 
 function toProductCard(doc: RawProductCard): ProductCardData {
   return {
@@ -66,6 +72,8 @@ function toProductCard(doc: RawProductCard): ProductCardData {
     salePrice: doc.salePrice,
     stockStatus: doc.stockStatus,
     variants: doc.variants,
+    averageRating: doc.averageRating,
+    reviewCount: doc.reviewCount,
   }
 }
 
@@ -88,6 +96,8 @@ function toProduct(doc: RawProductFull): MockProduct {
     isFeatured: doc.isFeatured,
     isActive: doc.isActive,
     tags: doc.tags,
+    averageRating: doc.averageRating,
+    reviewCount: doc.reviewCount,
   }
 }
 

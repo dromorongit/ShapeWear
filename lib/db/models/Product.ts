@@ -26,6 +26,8 @@ export interface IProduct extends Document {
   isFeatured: boolean
   isActive: boolean
   tags: string[]
+  averageRating: number
+  reviewCount: number
   createdAt: Date
   updatedAt: Date
 }
@@ -64,6 +66,8 @@ const ProductSchema = new Schema<IProduct>(
     isFeatured: { type: Boolean, default: false, index: true },
     isActive: { type: Boolean, default: true, index: true },
     tags: { type: [String], default: [] },
+    averageRating: { type: Number, default: 0, min: 0, max: 5 },
+    reviewCount: { type: Number, default: 0, min: 0 },
   },
   { timestamps: true }
 )

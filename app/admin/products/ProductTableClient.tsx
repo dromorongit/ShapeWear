@@ -6,6 +6,7 @@ import Image from 'next/image'
 import Card from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 import Badge from '@/components/ui/Badge'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 const stockStatusVariant = {
   'in-stock': 'inStock' as const,
@@ -137,7 +138,7 @@ export default function ProductTableClient({ products }: { products: ProductRow[
                 </td>
                 <td className="px-4 py-4">
                   <span className="font-body text-small text-ink/70">
-                    GHS {product.salePrice ?? product.price}
+                    {formatCurrency(product.salePrice ?? product.price)}
                   </span>
                 </td>
                 <td className="px-4 py-4">

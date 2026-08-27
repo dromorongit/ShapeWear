@@ -10,6 +10,7 @@ export const revalidate = 3600
 
 export default async function Home() {
   const featuredProducts = await getFeaturedProducts()
+
   return (
     <>
       <Hero />
@@ -24,13 +25,19 @@ export default async function Home() {
             </div>
           </Reveal>
 
-          <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
-            {featuredProducts.map((product, index) => (
-              <Reveal key={product.id} delay={index * 80}>
-                <ProductCard product={product} priority={index < 4} />
-              </Reveal>
-            ))}
-          </div>
+          {featuredProducts.length === 0 ? (
+            <div className="mt-12 text-center">
+              <p className="font-body text-body text-ink/60">No products yet — check back soon.</p>
+            </div>
+          ) : (
+            <div className="mt-12 grid grid-cols-2 gap-4 sm:gap-6 md:grid-cols-3 lg:grid-cols-4">
+              {featuredProducts.map((product, index) => (
+                <Reveal key={product.id} delay={index * 80}>
+                  <ProductCard product={product} priority={index < 4} />
+                </Reveal>
+              ))}
+            </div>
+          )}
 
           <Reveal>
             <div className="mt-14 text-center">

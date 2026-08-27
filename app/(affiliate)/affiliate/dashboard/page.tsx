@@ -5,6 +5,7 @@ import Affiliate from '@/lib/db/models/Affiliate'
 import { verifyAffiliateToken } from '@/lib/auth'
 import Card from '@/components/ui/Card'
 import CopyLinkButton from '@/components/affiliate/CopyLinkButton'
+import { formatCurrency } from '@/lib/formatCurrency'
 
 export const dynamic = 'force-dynamic'
 
@@ -104,19 +105,19 @@ export default async function AffiliateDashboardPage() {
             Commission Earned
           </p>
           <p className="mt-2 font-display text-3xl font-semibold text-ink">
-            GH₵{affiliate.totalCommissionEarned || 0}
+            {formatCurrency(affiliate.totalCommissionEarned || 0)}
           </p>
         </Card>
         <Card className="p-5">
           <p className="font-body text-small text-ink/60">Commission Paid</p>
           <p className="mt-2 font-display text-3xl font-semibold text-ink">
-            GH₵{affiliate.totalCommissionPaid || 0}
+            {formatCurrency(affiliate.totalCommissionPaid || 0)}
           </p>
         </Card>
         <Card className="p-5">
           <p className="font-body text-small text-ink/60">Pending Balance</p>
           <p className="mt-2 font-display text-3xl font-semibold text-ink">
-            GH₵{pendingBalance}
+            {formatCurrency(pendingBalance)}
           </p>
         </Card>
         <Card className="p-5">

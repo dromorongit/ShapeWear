@@ -2,6 +2,17 @@ import ProductCard from './ProductCard'
 import type { ProductCardData } from '@/lib/db/queries/products'
 
 const ProductGrid = ({ products }: { products: ProductCardData[] }) => {
+  if (products.length === 0) {
+    return (
+      <section id="product-grid" className="py-16 md:py-24">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="font-display text-h2 font-semibold text-ink">Shop All</h2>
+          <p className="mt-4 font-body text-body text-ink/60">No products yet — check back soon.</p>
+        </div>
+      </section>
+    )
+  }
+
   return (
     <section id="product-grid" className="py-16 md:py-24">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
