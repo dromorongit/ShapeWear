@@ -46,12 +46,14 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
 
   const getStockStatus = (stock: number): StockStatus => {
     if (stock === 0) return 'out-of-stock'
-    if (stock <= 3) return 'low-stock'
+    if (stock <= 5) return 'low-stock'
     return 'in-stock'
   }
 
   const currentVariant = getVariant(selectedShape, selectedSize)
-  const currentStock = getVariantStock(currentVariant)
+  const variantStock = getVariantStock(currentVariant)
+  const productStock = product?.stock ?? 0
+  const currentStock = variantStock + productStock
   const currentStatus = getStockStatus(currentStock)
   const isOutOfStock = currentStatus === 'out-of-stock'
 
@@ -87,7 +89,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
     setSelectedShape(shape)
     const inStockSize = sizes.find((s) => {
       const variant = getVariant(shape, s)
-      return variant !== undefined && variant.stock > 0
+      return variant !== undefined && (variant.stock > 0 || productStock > 0)
     }) ?? sizes[0] ?? ''
     setSelectedSize(inStockSize)
     setQuantity(1)
@@ -125,7 +127,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
         <div className="flex flex-wrap gap-2">
           {sizes.map((size) => {
             const variant = getVariant(selectedShape, size)
-            const isDisabled = !variant || variant.stock === 0
+            const isDisabled = !variant || (variant.stock === 0 && productStock === 0)
 
             return (
               <button
