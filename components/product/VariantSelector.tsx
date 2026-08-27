@@ -56,7 +56,6 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
   const currentStock = getVariantStock(currentVariant)
   const currentStatus = getStockStatus(currentStock)
   const isOutOfStock = currentStatus === 'out-of-stock'
-  const isLowStock = currentStatus === 'low-stock'
 
   useEffect(() => {
     if (!currentVariant && shapes.length > 0 && sizes.length > 0) {
