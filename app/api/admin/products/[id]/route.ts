@@ -63,9 +63,12 @@ export async function PUT(
   if (body.variants) {
     body.shapes = Array.from(new Set(body.variants.map((v: { shape: string }) => v.shape)))
     body.sizes = Array.from(new Set(body.variants.map((v: { size: string }) => v.size)))
-    const totalStock = body.variants.reduce((sum: number, v: { stock: number }) => sum + (Number(v.stock) || 0), 0)
-    body.stockStatus = totalStock === 0 ? 'out-of-stock' : totalStock <= 5 ? 'low-stock' : 'in-stock'
   }
+
+  const currentStock = body.stock !== undefined ? Number(body.stock) : product.stock
+  const currentVariants = body.variants || product.variants
+  const totalStock = (Number(currentStock) || 0) + currentVariants.reduce((sum: number, v: { stock: number }) => sum + (Number(v.stock) || 0), 0)
+  body.stockStatus = totalStock === 0 ? 'out-of-stock' : totalStock <= 5 ? 'low-stock' : 'in-stock'
 
   if (body.tags && typeof body.tags === 'string') {
     body.tags = body.tags.split(',').map((t: string) => t.trim())

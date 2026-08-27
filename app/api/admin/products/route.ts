@@ -72,7 +72,7 @@ export async function POST(request: NextRequest) {
 
   const shapes = Array.from(new Set(safeVariants.map((v: { shape: string }) => v.shape)))
   const sizes = Array.from(new Set(safeVariants.map((v: { size: string }) => v.size)))
-  const totalStock = safeVariants.reduce((sum: number, v: { stock: number }) => sum + (Number(v.stock) || 0), 0)
+  const totalStock = (Number(stock) || 0) + safeVariants.reduce((sum: number, v: { stock: number }) => sum + (Number(v.stock) || 0), 0)
   const stockStatus = totalStock === 0 ? 'out-of-stock' : totalStock <= 5 ? 'low-stock' : 'in-stock'
 
   const product = new Product({

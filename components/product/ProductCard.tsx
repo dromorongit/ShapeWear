@@ -45,8 +45,8 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
         ? 'Low Stock'
         : 'Out of Stock'
 
-  const shapeCount = new Set(product.variants.map((v) => v.shape)).size
-  const sizeCount = new Set(product.variants.map((v) => v.size)).size
+  const shapeCount = product.shapes.length
+  const sizeCount = product.sizes.length
 
   return (
     <Link href={`/products/${product.slug}`} className="group block">
@@ -94,9 +94,11 @@ const ProductCard = ({ product, priority = false }: ProductCardProps) => {
 
           <div className="mt-2.5 flex flex-wrap items-center gap-1.5">
             <Badge variant={stockVariant}>{stockLabel}</Badge>
-            <span className="font-body text-small text-ink/60">
-              {shapeCount} shape{shapeCount !== 1 ? 's' : ''}, {sizeCount} size{sizeCount !== 1 ? 's' : ''}
-            </span>
+            {(shapeCount > 0 || sizeCount > 0) && (
+              <span className="font-body text-small text-ink/60">
+                {shapeCount} shape{shapeCount !== 1 ? 's' : ''}, {sizeCount} size{sizeCount !== 1 ? 's' : ''}
+              </span>
+            )}
           </div>
         </div>
       </Card>

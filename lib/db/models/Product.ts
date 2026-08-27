@@ -77,8 +77,8 @@ const ProductSchema = new Schema<IProduct>(
 ProductSchema.index({ isActive: 1, isFeatured: 1 })
 
 ProductSchema.pre<IProduct>('save', function () {
-  if (!this.isModified('variants')) return
-  const totalStock = this.variants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0)
+  if (!this.isModified('variants') && !this.isModified('stock')) return
+  const totalStock = (Number(this.stock) || 0) + this.variants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0)
   if (totalStock === 0) {
     this.stockStatus = 'out-of-stock'
   } else if (totalStock <= 5) {
