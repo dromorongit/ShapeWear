@@ -284,6 +284,19 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
     }, 800)
   }
 
+  const variantShapes = Array.from(new Set(form.variants.map((v) => v.shape).filter(Boolean)))
+  const variantSizes = Array.from(new Set(form.variants.map((v) => v.size).filter(Boolean)))
+  const variantPairs = new Set(form.variants.map((v) => `${v.shape}-${v.size}`))
+  const missingCombinations: string[] = []
+  variantShapes.forEach((shape) => {
+    variantSizes.forEach((size) => {
+      if (!variantPairs.has(`${shape}-${size}`)) {
+        missingCombinations.push(`${shape} / ${size}`)
+      }
+    })
+  })
+  const hasIncompleteCoverage = missingCombinations.length > 0 && variantShapes.length > 0 && variantSizes.length > 0
+
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
       {successMessage && (
@@ -597,6 +610,14 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
         <Button type="button" variant="secondary" onClick={addVariant}>
           Add Variant Row
         </Button>
+        {hasIncompleteCoverage && (
+          <div className="mt-3 rounded-md bg-amber-50 p-3 font-body text-small text-amber-700">
+            <span className="font-medium">Note:</span> Some shape/size combinations are missing variant rows:{' '}
+            {missingCombinations.slice(0, 3).join(', ')}
+            {missingCombinations.length > 3 && ` and ${missingCombinations.length - 3} more`}.
+            Customers selecting these will see &quot;Combination Not Available&quot;.
+          </div>
+        )}
       </Card>
 
       <div className="flex items-center justify-end gap-3">

@@ -24,9 +24,9 @@ interface VariantSelectorProps {
 type StockStatus = 'in-stock' | 'low-stock' | 'out-of-stock'
 
 const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorProps) => {
-  const firstInStockVariant = variants.find((v) => v.stock > 0)
-  const defaultShape = firstInStockVariant?.shape ?? shapes[0] ?? ''
-  const defaultSize = firstInStockVariant?.size ?? sizes[0] ?? ''
+  const defaultVariant = variants.find((v) => v.stock > 0) ?? variants[0]
+  const defaultShape = defaultVariant?.shape ?? shapes[0] ?? ''
+  const defaultSize = defaultVariant?.size ?? sizes[0] ?? ''
   const [selectedShape, setSelectedShape] = useState<string>(defaultShape)
   const [selectedSize, setSelectedSize] = useState<string>(defaultSize)
   const [quantity, setQuantity] = useState<number>(1)
@@ -56,6 +56,29 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
   const currentStock = variantStock + productStock
   const currentStatus = getStockStatus(currentStock)
   const isOutOfStock = currentStatus === 'out-of-stock'
+  const hasNoMatchingVariant = !currentVariant
+  const isAddToCartDisabled = isOutOfStock || hasNoMatchingVariant || !product
+
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development' && variants.length > 0) {
+      const definedShapeSizePairs = new Set(variants.map((v) => `${v.shape}-${v.size}`))
+      const missingCombinations: string[] = []
+      shapes.forEach((shape) => {
+        sizes.forEach((size) => {
+          const key = `${shape}-${size}`
+          if (!definedShapeSizePairs.has(key)) {
+            missingCombinations.push(key)
+          }
+        })
+      })
+      if (missingCombinations.length > 0) {
+        console.warn(
+          `[VariantSelector] Product "${product?.name ?? product?.slug ?? 'unknown'}" has shapes/sizes without matching variants:`,
+          missingCombinations
+        )
+      }
+    }
+  }, [shapes, sizes, variants, product?.name, product?.slug])
 
   useEffect(() => {
     if (!currentVariant && shapes.length > 0 && sizes.length > 0) {
@@ -68,7 +91,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
   }, [currentVariant, shapes, sizes, variants])
 
   const handleAddToCart = () => {
-    if (isOutOfStock || !currentVariant || !product) return
+    if (isAddToCartDisabled) return
     addItem({
       productId: product.id,
       slug: product.slug,
@@ -151,10 +174,14 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
       </div>
 
       <div className="flex items-center gap-3">
-        <Badge variant={currentStatus === 'in-stock' ? 'inStock' : currentStatus === 'low-stock' ? 'lowStock' : 'outOfStock'}>
-          {currentStatus === 'in-stock' ? 'In Stock' : currentStatus === 'low-stock' ? 'Low Stock' : 'Out of Stock'}
-        </Badge>
-        {!isOutOfStock && (
+        {hasNoMatchingVariant ? (
+          <Badge variant="outOfStock">Not Available</Badge>
+        ) : (
+          <Badge variant={currentStatus === 'in-stock' ? 'inStock' : currentStatus === 'low-stock' ? 'lowStock' : 'outOfStock'}>
+            {currentStatus === 'in-stock' ? 'In Stock' : currentStatus === 'low-stock' ? 'Low Stock' : 'Out of Stock'}
+          </Badge>
+        )}
+        {!isOutOfStock && !hasNoMatchingVariant && (
           <span className="font-body text-small text-ink/60">{currentStock} available</span>
         )}
       </div>
@@ -165,7 +192,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.max(1, q - 1))}
-            disabled={quantity <= 1}
+            disabled={quantity <= 1 || hasNoMatchingVariant}
             className="px-3 py-2 font-body text-small text-ink hover:bg-blush disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
           >
             -
@@ -174,7 +201,7 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
           <button
             type="button"
             onClick={() => setQuantity((q) => Math.min(currentStock, q + 1))}
-            disabled={quantity >= currentStock || isOutOfStock}
+            disabled={quantity >= currentStock || isOutOfStock || hasNoMatchingVariant}
             className="px-3 py-2 font-body text-small text-ink hover:bg-blush disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
           >
             +
@@ -185,17 +212,27 @@ const VariantSelector = ({ shapes, sizes, variants, product }: VariantSelectorPr
       <p className="font-body text-small text-ink/60">
         Selected: {selectedShape} / {selectedSize}
         {currentVariant && ` — SKU: ${currentVariant.sku}`}
+        {hasNoMatchingVariant && ' — Not available'}
       </p>
 
       <div>
         <button
           type="button"
           onClick={handleAddToCart}
-          disabled={isOutOfStock}
+          disabled={isAddToCartDisabled}
           className="w-full rounded-md bg-pink px-6 py-3 font-body text-base font-medium text-white transition-colors hover:bg-pink/90 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2"
         >
-          {isOutOfStock ? 'Out of Stock' : 'Add to Cart'}
+          {hasNoMatchingVariant
+            ? 'Combination Not Available'
+            : isOutOfStock
+              ? 'Out of Stock'
+              : 'Add to Cart'}
         </button>
+        {hasNoMatchingVariant && (
+          <p className="mt-2 font-body text-small text-ink/60">
+            This shape and size combination is not available.
+          </p>
+        )}
         {cartMessage && (
           <p className="mt-2 font-body text-small text-pink">{cartMessage}</p>
         )}
