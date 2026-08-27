@@ -244,6 +244,12 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
       return
     }
 
+    const invalidVariant = form.variants.find((v) => !v.sku.trim() || !v.shape || !v.size)
+    if (invalidVariant) {
+      setErrorMessage('Each variant must have a SKU, shape, and size.')
+      return
+    }
+
     const payload = {
       ...form,
       price: Number(form.price),

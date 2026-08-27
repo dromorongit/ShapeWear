@@ -56,7 +56,7 @@ const ProductSchema = new Schema<IProduct>(
     category: { type: String, required: true, index: true },
     shapes: { type: [String], required: true },
     sizes: { type: [String], required: true },
-    variants: { type: [ProductVariantSchema], required: true },
+    variants: { type: [ProductVariantSchema], default: [] },
     stockStatus: {
       type: String,
       enum: ['in-stock', 'low-stock', 'out-of-stock'],
@@ -76,7 +76,7 @@ ProductSchema.index({ isActive: 1, isFeatured: 1 })
 
 ProductSchema.pre('save', function () {
   if (!this.isModified('variants')) return
-  const totalStock = this.variants.reduce((sum, v) => sum + v.stock, 0)
+  const totalStock = this.variants.reduce((sum, v) => sum + (Number(v.stock) || 0), 0)
   if (totalStock === 0) {
     this.stockStatus = 'out-of-stock'
   } else if (totalStock <= 5) {

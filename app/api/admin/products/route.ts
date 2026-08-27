@@ -54,11 +54,12 @@ export async function POST(request: NextRequest) {
   if (!price) missingFields.push('price')
   if (!category) missingFields.push('category')
   if (!mainImage) missingFields.push('mainImage')
-  if (!variants) missingFields.push('variants')
 
   if (missingFields.length > 0) {
     return NextResponse.json({ error: `Missing required fields: ${missingFields.join(', ')}` }, { status: 400 })
   }
+
+  const safeVariants = Array.isArray(variants) ? variants : []
 
   let finalSlug = String(slug).toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '')
   let counter = 2
@@ -67,8 +68,10 @@ export async function POST(request: NextRequest) {
     counter++
   }
 
-  const shapes = Array.from(new Set(variants.map((v: { shape: string }) => v.shape)))
-  const sizes = Array.from(new Set(variants.map((v: { size: string }) => v.size)))
+  const shapes = Array.from(new Set(safeVariants.map((v: { shape: string }) => v.shape)))
+  const sizes = Array.from(new Set(safeVariants.map((v: { size: string }) => v.size)))
+  const totalStock = safeVariants.reduce((sum: number, v: { stock: number }) => sum + (Number(v.stock) || 0), 0)
+  const stockStatus = totalStock === 0 ? 'out-of-stock' : totalStock <= 5 ? 'low-stock' : 'in-stock'
 
   const product = new Product({
     name,
@@ -79,12 +82,13 @@ export async function POST(request: NextRequest) {
     salePrice: salePrice ? Number(salePrice) : null,
     category,
     mainImage,
-    variants,
+    variants: safeVariants,
     isActive: isActive ?? true,
     isFeatured: isFeatured ?? false,
     tags: tags ? String(tags).split(',').map((t: string) => t.trim()) : [],
     shapes,
     sizes,
+    stockStatus,
   })
 
   await product.save()
