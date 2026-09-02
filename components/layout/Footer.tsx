@@ -1,6 +1,7 @@
 import Link from 'next/link'
 import { FaTiktok } from 'react-icons/fa'
 import { BUSINESS_NAME, TAGLINE, PHONE, EMAIL, LOCATION, TIKTOK } from '@/lib/constants'
+import DeveloperCredits from '@/components/layout/DeveloperCredits'
 
 const Footer = () => {
   const currentYear = new Date().getFullYear()
@@ -81,6 +82,8 @@ const Footer = () => {
           <p className="font-body text-small text-blush/50 text-center">
             &copy; {currentYear} {BUSINESS_NAME}. All rights reserved.
           </p>
+
+          <DeveloperCredits />
         </div>
       </div>
     </footer>
