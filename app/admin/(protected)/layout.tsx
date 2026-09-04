@@ -17,7 +17,7 @@ export default function AdminLayout({
   return (
     <div className="flex min-h-screen bg-blush">
       <AdminNav />
-      <div className="flex flex-1 flex-col">
+      <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex h-16 items-center justify-between border-b border-ink/5 bg-white px-4 sm:px-6">
           <h1 className="font-display text-xl font-semibold text-ink md:hidden">
             Admin
@@ -28,7 +28,7 @@ export default function AdminLayout({
             </span>
           </div>
         </header>
-        <main className="flex-1 p-4 sm:p-6 lg:p-8">
+        <main className="min-w-0 flex-1 p-4 sm:p-6 lg:p-8">
           {children}
         </main>
       </div>

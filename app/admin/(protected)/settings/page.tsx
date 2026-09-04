@@ -139,26 +139,26 @@ export default function AdminSettingsPage() {
                   Authenticated admins still see the live site. Remember to click Save.
                 </p>
               </div>
-             <button
-                 type="button"
-                 role="switch"
-                 aria-checked={isMaintenanceMode}
-                 onClick={() => {
-                   if (settings?.isMaintenanceMode !== isMaintenanceMode) {
-                     setIsMaintenanceMode(!isMaintenanceMode)
-                     setSaved(false)
-                   }
-                 }}
-                 className={`relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 ${
-                   isMaintenanceMode ? 'bg-pink' : 'bg-ink/20'
-                 }`}
-               >
-                 <span
-                   className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${
-                     isMaintenanceMode ? 'translate-x-6' : 'translate-x-1'
-                   }`}
-                 />
-               </button>
+              <button
+                  type="button"
+                  role="switch"
+                  aria-checked={isMaintenanceMode}
+                  disabled={!settings}
+                  onClick={() => {
+                    setIsMaintenanceMode((prev) => !prev)
+                    setSaved(false)
+                    setError(null)
+                  }}
+                  className={`relative inline-flex h-8 w-14 shrink-0 cursor-pointer items-center rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-pink focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 ${
+                    isMaintenanceMode ? 'bg-pink' : 'bg-ink/20'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-6 w-6 transform rounded-full bg-white shadow transition duration-200 ease-in-out ${
+                      isMaintenanceMode ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
             </label>
           </div>
 
