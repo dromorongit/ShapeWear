@@ -563,85 +563,149 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
           <h3 className="font-display text-lg font-semibold text-ink">
             Variants
           </h3>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[600px] text-left">
-            <thead>
-              <tr className="border-b border-ink/5">
-                <th className="px-3 py-2 font-body text-small font-medium text-ink/60">Shape</th>
-                <th className="px-3 py-2 font-body text-small font-medium text-ink/60">Size</th>
-                <th className="px-3 py-2 font-body text-small font-medium text-ink/60">SKU</th>
-                <th className="px-3 py-2 font-body text-small font-medium text-ink/60">Stock</th>
-                <th className="px-3 py-2 font-body text-small font-medium text-ink/60"></th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-ink/5">
-              {form.variants.map((variant, index) => (
-                <tr key={index}>
-                  <td className="px-3 py-2">
-                    <select
-                      value={variant.shape}
-                      onChange={(e) => updateVariant(index, 'shape', e.target.value)}
-                      className="w-full rounded-md border border-ink/10 bg-white px-2 py-1.5 font-body text-small text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
-                    >
-                      <option value="">Select</option>
-                      {SHAPES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-3 py-2">
-                    <select
-                      value={variant.size}
-                      onChange={(e) => updateVariant(index, 'size', e.target.value)}
-                      className="w-full rounded-md border border-ink/10 bg-white px-2 py-1.5 font-body text-small text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
-                    >
-                      <option value="">Select</option>
-                      {SIZES.map((s) => (
-                        <option key={s} value={s}>{s}</option>
-                      ))}
-                    </select>
-                  </td>
-                  <td className="px-3 py-2">
-                    <Input
-                      value={variant.sku}
-                      onChange={(e) => updateVariant(index, 'sku', e.target.value)}
-                      className="h-9"
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    <Input
-                      type="number"
-                      value={String(variant.stock)}
-                      onChange={(e) => updateVariant(index, 'stock', Number(e.target.value) || 0)}
-                      className="h-9"
-                    />
-                  </td>
-                  <td className="px-3 py-2">
-                    <button
-                      type="button"
-                      onClick={() => removeVariant(index)}
-                      className="font-body text-small text-red-600 hover:underline"
-                    >
-                      Remove
-                    </button>
-                  </td>
+
+          {/* Mobile: stacked variant cards */}
+          <div className="block md:hidden space-y-4">
+            {form.variants.map((variant, index) => (
+              <div
+                key={index}
+                className="rounded-md border border-ink/10 bg-white p-4 space-y-3"
+              >
+                <div>
+                  <label className="block font-body text-xss font-medium text-ink/50 mb-1">
+                    Shape
+                  </label>
+                  <select
+                    value={variant.shape}
+                    onChange={(e) => updateVariant(index, 'shape', e.target.value)}
+                    className="w-full rounded-md border border-ink/10 bg-white px-3 py-2 font-body text-small text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
+                  >
+                    <option value="">Select</option>
+                    {SHAPES.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+                <div>
+                  <label className="block font-body text-xss font-medium text-ink/50 mb-1">
+                    Size
+                  </label>
+                  <select
+                    value={variant.size}
+                    onChange={(e) => updateVariant(index, 'size', e.target.value)}
+                    className="w-full rounded-md border border-ink/10 bg-white px-3 py-2 font-body text-small text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
+                  >
+                    <option value="">Select</option>
+                    {SIZES.map((s) => (
+                      <option key={s} value={s}>{s}</option>
+                    ))}
+                  </select>
+                </div>
+                <Input
+                  label="SKU"
+                  value={variant.sku}
+                  onChange={(e) => updateVariant(index, 'sku', e.target.value)}
+                />
+                <Input
+                  label="Stock"
+                  type="number"
+                  value={String(variant.stock)}
+                  onChange={(e) => updateVariant(index, 'stock', Number(e.target.value) || 0)}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  className="w-full text-red-600 hover:bg-red-50"
+                  onClick={() => removeVariant(index)}
+                >
+                  Remove Variant
+                </Button>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop: table */}
+          <div className="hidden md:block overflow-x-auto">
+            <table className="w-full min-w-[600px] text-left">
+              <thead>
+                <tr className="border-b border-ink/5">
+                  <th className="px-3 py-2 font-body text-small font-medium text-ink/60">Shape</th>
+                  <th className="px-3 py-2 font-body text-small font-medium text-ink/60">Size</th>
+                  <th className="px-3 py-2 font-body text-small font-medium text-ink/60">SKU</th>
+                  <th className="px-3 py-2 font-body text-small font-medium text-ink/60">Stock</th>
+                  <th className="px-3 py-2 font-body text-small font-medium text-ink/60"></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        <Button type="button" variant="secondary" onClick={addVariant}>
-          Add Variant Row
-        </Button>
-         {hasIncompleteCoverage && (
-           <div className="mt-3 rounded-md bg-amber-50 p-3 font-body text-small text-amber-700">
-             <span className="font-medium">Note:</span> Some shape/size combinations are missing variant rows:{' '}
-             {missingCombinations.slice(0, 3).join(', ')}
-             {missingCombinations.length > 3 && ` and ${missingCombinations.length - 3} more`}.
-             Customers selecting these will see &quot;Combination Not Available&quot;.
-           </div>
-         )}
-       </Card>
+              </thead>
+              <tbody className="divide-y divide-ink/5">
+                {form.variants.map((variant, index) => (
+                  <tr key={index}>
+                    <td className="px-3 py-2">
+                      <select
+                        value={variant.shape}
+                        onChange={(e) => updateVariant(index, 'shape', e.target.value)}
+                        className="w-full rounded-md border border-ink/10 bg-white px-2 py-1.5 font-body text-small text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
+                      >
+                        <option value="">Select</option>
+                        {SHAPES.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-3 py-2">
+                      <select
+                        value={variant.size}
+                        onChange={(e) => updateVariant(index, 'size', e.target.value)}
+                        className="w-full rounded-md border border-ink/10 bg-white px-2 py-1.5 font-body text-small text-ink focus:border-pink focus:outline-none focus:ring-2 focus:ring-pink/20"
+                      >
+                        <option value="">Select</option>
+                        {SIZES.map((s) => (
+                          <option key={s} value={s}>{s}</option>
+                        ))}
+                      </select>
+                    </td>
+                    <td className="px-3 py-2">
+                      <Input
+                        value={variant.sku}
+                        onChange={(e) => updateVariant(index, 'sku', e.target.value)}
+                        className="h-9"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <Input
+                        type="number"
+                        value={String(variant.stock)}
+                        onChange={(e) => updateVariant(index, 'stock', Number(e.target.value) || 0)}
+                        className="h-9"
+                      />
+                    </td>
+                    <td className="px-3 py-2">
+                      <button
+                        type="button"
+                        onClick={() => removeVariant(index)}
+                        className="font-body text-small text-red-600 hover:underline"
+                      >
+                        Remove
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <Button type="button" variant="secondary" onClick={addVariant}>
+            Add Variant Row
+          </Button>
+          {hasIncompleteCoverage && (
+            <div className="mt-3 rounded-md bg-amber-50 p-3 font-body text-small text-amber-700">
+              <span className="font-medium">Note:</span> Some shape/size combinations are missing variant rows:{' '}
+              {missingCombinations.slice(0, 3).join(', ')}
+              {missingCombinations.length > 3 && ` and ${missingCombinations.length - 3} more`}.
+              Customers selecting these will see &quot;Combination Not Available&quot;.
+            </div>
+          )}
+        </Card>
       )}
 
       <div className="flex items-center justify-end gap-3">

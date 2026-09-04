@@ -27,44 +27,6 @@ export default function AdminLayout({
               Admin Panel
             </span>
           </div>
-          <nav className="flex items-center gap-4 md:hidden" aria-label="Admin mobile">
-            <a
-              href="/admin/dashboard"
-              className="font-body text-small font-medium text-ink/70 hover:text-pink"
-            >
-              Dashboard
-            </a>
-            <a
-              href="/admin/products"
-              className="font-body text-small font-medium text-ink/70 hover:text-pink"
-            >
-              Products
-            </a>
-            <a
-              href="/admin/categories"
-              className="font-body text-small font-medium text-ink/70 hover:text-pink"
-            >
-              Categories
-            </a>
-            <a
-              href="/admin/reviews"
-              className="font-body text-small font-medium text-ink/70 hover:text-pink"
-            >
-              Reviews
-            </a>
-            <a
-              href="/admin/affiliates"
-              className="font-body text-small font-medium text-ink/70 hover:text-pink"
-            >
-              Affiliates
-            </a>
-            <a
-              href="/admin/settings"
-              className="font-body text-small font-medium text-ink/70 hover:text-pink"
-            >
-              Settings
-            </a>
-          </nav>
         </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8">
           {children}

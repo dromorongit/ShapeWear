@@ -31,9 +31,9 @@ export async function POST(request: Request) {
     }
 
     const affiliate = await Affiliate.findOne({
-      referralCode: trimmedCode,
-      status: 'approved',
-    }).lean().exec()
+       referralCode: trimmedCode,
+       status: 'approved',
+     }).lean().exec()
 
     if (!affiliate) {
       return NextResponse.json({ success: true, counted: false })
@@ -44,25 +44,8 @@ export async function POST(request: Request) {
       { $inc: { totalClicks: 1 } }
     ).exec()
 
-    const response = NextResponse.json({ success: true, counted: true })
-    response.cookies.set(cookieName, '1', {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 24 * 60 * 60,
-    })
-
-    if (trimmedCode) {
-      response.cookies.set('sc_ref', trimmedCode, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'lax',
-        maxAge: 30 * 24 * 60 * 60,
-      })
-    }
-
     recordRequest(`track:${ip}`)
-    return response
+    return NextResponse.json({ success: true, counted: true })
   } catch {
     return NextResponse.json({ error: 'Tracking failed' }, { status: 500 })
   }

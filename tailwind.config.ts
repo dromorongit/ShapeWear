@@ -29,6 +29,7 @@ const config: Config = {
         body: ['1rem', { lineHeight: '1.6', fontWeight: '400' }],
         lead: ['1.25rem', { lineHeight: '1.5', fontWeight: '400' }],
         small: ['0.875rem', { lineHeight: '1.5', fontWeight: '400' }],
+        xss: ['0.625rem', { lineHeight: '1.4', fontWeight: '400' }],
         price: ['1.125rem', { lineHeight: '1.4', fontWeight: '500' }],
       },
       borderRadius: {

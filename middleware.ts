@@ -7,6 +7,16 @@ export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname
   let response = NextResponse.next()
 
+  const ref = request.nextUrl.searchParams.get('ref')
+  if (ref) {
+    response.cookies.set('sc_ref', ref, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 30 * 24 * 60 * 60,
+    })
+  }
+
   const isAdminPage = pathname.startsWith('/admin')
   const isAdminApi = pathname.startsWith('/api/admin')
   const isLoginPage = pathname === '/admin/login'
@@ -81,5 +91,5 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/affiliate/:path*', '/api/admin/:path*', '/api/affiliate/:path*'],
+  matcher: ['/((?!_next/static|_next/image|favicon.ico|.\\..).)'],
 }

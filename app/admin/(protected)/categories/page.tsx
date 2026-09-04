@@ -136,7 +136,7 @@ export default function AdminCategoriesPage() {
                   </div>
                   <Button
                     variant="ghost"
-                    size="sm"
+                    size="md"
                     disabled={count > 0 || deletingId === cat.id}
                     onClick={() => handleDelete(cat.id)}
                   >

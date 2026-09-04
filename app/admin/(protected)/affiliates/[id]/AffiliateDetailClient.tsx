@@ -191,7 +191,7 @@ export default function AffiliateDetailClient({
               This rate is snapshotted per order at checkout time. Changing it only affects future orders.
             </p>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-2">
             {editingRate ? (
               <>
                 <input
@@ -200,7 +200,7 @@ export default function AffiliateDetailClient({
                   max={100}
                   value={rateValue}
                   onChange={(e) => setRateValue(e.target.value)}
-                  className="h-10 w-20 rounded-md border border-ink/10 px-3 font-body text-body text-ink"
+                  className="h-10 w-full sm:w-20 rounded-md border border-ink/10 px-3 font-body text-body text-ink"
                 />
                 <Button size="sm" onClick={saveCommissionRate} disabled={loading}>
                   Save
@@ -230,13 +230,17 @@ export default function AffiliateDetailClient({
         </div>
 
         {affiliate.status === 'pending' && (
-          <div className="flex items-center gap-2 pt-4 border-t border-ink/5">
-            <Button onClick={() => updateStatus('approved')} disabled={loading}>
+          <div className="flex flex-col gap-3 pt-4 border-t border-ink/5 sm:flex-row sm:gap-2">
+            <Button
+              className="sm:flex-1"
+              onClick={() => updateStatus('approved')}
+              disabled={loading}
+            >
               Approve Affiliate
             </Button>
             <Button
               variant="ghost"
-              className="text-red-600 hover:bg-red-50"
+              className="sm:flex-1 text-red-600 hover:bg-red-50"
               onClick={() => updateStatus('rejected')}
               disabled={loading}
             >
@@ -249,7 +253,7 @@ export default function AffiliateDetailClient({
       <Card className="p-6">
         <h3 className="font-display text-lg font-semibold text-ink mb-4">Record Payout</h3>
         <form onSubmit={recordPayout} className="space-y-4">
-          <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
+          <div className="flex flex-col gap-3 sm:flex-row sm:gap-4">
             <div className="flex-1">
               <label className="block font-body text-small font-medium text-ink/70 mb-1">
                  Amount (GH₵)
@@ -264,7 +268,7 @@ export default function AffiliateDetailClient({
                   setPayoutWarning('')
                 }}
                 placeholder="0.00"
-                className="h-10 w-full rounded-md border border-ink/10 px-3 font-body text-body text-ink"
+                className="h-12 w-full rounded-md border border-ink/10 px-3 font-body text-body text-ink text-[16px]"
               />
                <p className="mt-1 font-body text-small text-ink/50">
                  Pending balance: {formatCurrency(balance)}
@@ -279,12 +283,14 @@ export default function AffiliateDetailClient({
                 value={payoutNote}
                 onChange={(e) => setPayoutNote(e.target.value)}
                 placeholder="e.g. Monthly payout"
-                className="h-10 w-full rounded-md border border-ink/10 px-3 font-body text-body text-ink"
+                className="h-12 w-full rounded-md border border-ink/10 px-3 font-body text-body text-ink text-[16px]"
               />
             </div>
-            <Button type="submit" disabled={loading}>
-              Record Payout
-            </Button>
+            <div className="sm:flex sm:items-end">
+              <Button type="submit" disabled={loading} className="w-full sm:w-auto">
+                Record Payout
+              </Button>
+            </div>
           </div>
           {payoutWarning && (
             <p className="font-body text-small text-gold">{payoutWarning}</p>
@@ -299,8 +305,33 @@ export default function AffiliateDetailClient({
         <div className="px-6 py-4 border-b border-ink/5">
           <h3 className="font-display text-lg font-semibold text-ink">Payout History</h3>
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full min-w-[500px] text-left">
+
+        {/* Mobile: card list */}
+        <div className="block md:hidden">
+          {payouts.length === 0 ? (
+            <p className="p-6 font-body text-small text-ink/50">No payouts recorded yet.</p>
+          ) : (
+            <ul className="divide-y divide-ink/5">
+              {payouts.map((payout) => (
+                <li key={payout.id} className="p-4">
+                  <p className="font-body text-xss text-ink/50">
+                    {new Date(payout.paidAt).toLocaleDateString()}
+                  </p>
+                  <p className="font-body text-body font-medium text-ink">
+                    {formatCurrency(payout.amount)}
+                  </p>
+                  <p className="font-body text-small text-ink/70 mt-1">
+                    {payout.note || '—'}
+                  </p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Desktop: table */}
+        <div className="hidden md:block overflow-x-auto">
+          <table className="w-full text-left">
             <thead>
               <tr className="border-b border-ink/5">
                 <th className="px-6 py-3 font-body text-small font-medium text-ink/60">
