@@ -22,9 +22,6 @@ interface OrderStatusResponse {
   status: PaymentStatus
   orderId: string
   customerName: string
-  phone: string
-  email?: string
-  deliveryAddress: string
   items: Array<{
     productName: string
     slug: string
@@ -67,7 +64,7 @@ function OrderConfirmationContent() {
     try {
       const res = await fetch(`/api/checkout/status/${encodeURIComponent(reference)}`)
       if (!res.ok) {
-        setOrderStatus({ status: 'not_found', orderId: '', customerName: '', phone: '', deliveryAddress: '', items: [], subtotal: 0 })
+        setOrderStatus({ status: 'not_found', orderId: '', customerName: '', items: [], subtotal: 0 })
         setLoading(false)
         return
       }
@@ -116,7 +113,7 @@ function OrderConfirmationContent() {
     `Hello ${BUSINESS_NAME}, I just placed an order.\n\nOrder ID: ${orderStatus?.orderId || reference}\n\nItems:\n${displayItems.map(item => {
       const variant = item.shape && item.size ? ` (${item.shape}/${item.size})` : ''
       return `- ${item.productName}${variant} x${item.quantity} = ${formatCurrency(item.price * item.quantity)}`
-    }).join('\n')}\n\nSubtotal: ${formatCurrency(displaySubtotal)}\n\nDelivery to: ${orderStatus?.deliveryAddress || deliveryDetails?.deliveryAddress || 'N/A'}\n\nPlease confirm my order.`
+    }).join('\n')}\n\nSubtotal: ${formatCurrency(displaySubtotal)}\n\nDelivery to: ${deliveryDetails?.deliveryAddress || 'N/A'}\n\nPlease confirm my order.`
   )
 
   const whatsappUrl = `https://wa.me/${PHONE}?text=${whatsappMessage}`
@@ -195,17 +192,17 @@ function OrderConfirmationContent() {
                 </div>
                 <div>
                   <dt className="font-body text-small text-ink/60">Phone</dt>
-                  <dd className="font-body text-body text-ink">{orderStatus.phone}</dd>
+                  <dd className="font-body text-body text-ink">{deliveryDetails?.phone || 'N/A'}</dd>
                 </div>
-                {orderStatus.email && (
+                {deliveryDetails?.email ? (
                   <div>
                     <dt className="font-body text-small text-ink/60">Email</dt>
-                    <dd className="font-body text-body text-ink">{orderStatus.email}</dd>
+                    <dd className="font-body text-body text-ink">{deliveryDetails.email}</dd>
                   </div>
-                )}
+                ) : null}
                 <div>
                   <dt className="font-body text-small text-ink/60">Delivery Address</dt>
-                  <dd className="font-body text-body text-ink">{orderStatus.deliveryAddress}</dd>
+                  <dd className="font-body text-body text-ink">{deliveryDetails?.deliveryAddress || 'N/A'}</dd>
                 </div>
               </dl>
             </div>

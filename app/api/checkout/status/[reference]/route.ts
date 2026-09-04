@@ -11,7 +11,7 @@ export async function GET(
     await connectDb()
 
     const order = await Order.findOne({ paystackReference: params.reference })
-      .select('status items subtotal customerName deliveryAddress phone email')
+      .select('status items subtotal customerName')
       .lean()
       .exec()
 
@@ -23,9 +23,6 @@ export async function GET(
       status: order.status,
       orderId: order._id.toString(),
       customerName: order.customerName,
-      phone: order.phone,
-      email: order.email,
-      deliveryAddress: order.deliveryAddress,
       items: order.items.map((item) => ({
         productName: item.productName,
         slug: item.slug,

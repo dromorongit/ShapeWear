@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import { Playfair_Display, DM_Sans, DM_Mono } from 'next/font/google'
 import './globals.css'
+import { SITE_URL } from '@/lib/constants'
 
 const display = Playfair_Display({
   weight: ['400', '600', '700'],
@@ -24,7 +25,7 @@ const mono = DM_Mono({
 })
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://shapewearcloset.com'),
+  metadataBase: new URL(SITE_URL),
   title: 'Shapewear Closet',
   description: 'Confidence starts from underneath',
   icons: {

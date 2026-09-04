@@ -3,8 +3,15 @@ import bcrypt from 'bcryptjs'
 import { connectDb } from '@/lib/db/connect'
 import Affiliate from '@/lib/db/models/Affiliate'
 import { generateReferralCode } from '@/lib/affiliate'
+import { checkRateLimit, recordRequest, getClientIp } from '@/lib/rate-limit'
 
 export async function POST(request: Request) {
+  const ip = getClientIp(request)
+
+  if (checkRateLimit(`affiliate-register:${ip}`, 3, 3_600_000)) {
+    return NextResponse.json({ error: 'Too many registration attempts. Please try again later.' }, { status: 429 })
+  }
+
   try {
     await connectDb()
 
@@ -83,5 +90,7 @@ export async function POST(request: Request) {
     )
   } catch {
     return NextResponse.json({ error: 'Registration failed' }, { status: 500 })
+  } finally {
+    recordRequest(`affiliate-register:${ip}`)
   }
 }

@@ -15,7 +15,7 @@ export async function GET(request: NextRequest) {
 
   const timestamp = Math.round(Date.now() / 1000)
   const signature = cloudinary.utils.api_sign_request(
-    { timestamp, folder: 'shapewear-closet' },
+    { timestamp, folder: 'shapewear-closet', quality: 'auto', fetch_format: 'auto' },
     process.env.CLOUDINARY_API_SECRET!
   )
 
@@ -25,5 +25,7 @@ export async function GET(request: NextRequest) {
     apiKey: process.env.CLOUDINARY_API_KEY,
     cloudName: process.env.CLOUDINARY_CLOUD_NAME,
     folder: 'shapewear-closet',
+    quality: 'auto',
+    fetchFormat: 'auto',
   })
 }

@@ -146,7 +146,7 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
   const uploadToCloudinary = async (file: File): Promise<string> => {
     const res = await fetch('/api/admin/cloudinary-signature')
     if (!res.ok) throw new Error('Failed to get upload signature')
-    const { signature, timestamp, apiKey, cloudName, folder } = await res.json()
+    const { signature, timestamp, apiKey, cloudName, folder, quality, fetchFormat } = await res.json()
 
     const formData = new FormData()
     formData.append('file', file)
@@ -154,6 +154,8 @@ export default function ProductForm({ initialData, productId }: ProductFormProps
     formData.append('timestamp', String(timestamp))
     formData.append('signature', signature)
     formData.append('folder', folder)
+    formData.append('quality', quality)
+    formData.append('fetch_format', fetchFormat)
 
     const uploadRes = await fetch(
       `https://api.cloudinary.com/v1_1/${cloudName}/image/upload`,

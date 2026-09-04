@@ -58,6 +58,12 @@ export default function AdminLayout({
             >
               Affiliates
             </a>
+            <a
+              href="/admin/settings"
+              className="font-body text-small font-medium text-ink/70 hover:text-pink"
+            >
+              Settings
+            </a>
           </nav>
         </header>
         <main className="flex-1 p-4 sm:p-6 lg:p-8">

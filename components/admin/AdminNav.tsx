@@ -81,6 +81,14 @@ export default function AdminNav() {
                 )}
               </a>
             </li>
+            <li>
+              <a
+                href="/admin/settings"
+                className="flex items-center rounded-md px-3 py-2 font-body text-body font-medium text-ink/70 hover:bg-blush hover:text-pink transition-colors"
+              >
+                Settings
+              </a>
+            </li>
             <li className="pt-4 border-t border-ink/5 mt-4">
               <a
                 href="/"

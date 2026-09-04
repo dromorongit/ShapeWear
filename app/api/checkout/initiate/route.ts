@@ -4,6 +4,8 @@ import { connectDb } from '@/lib/db/connect'
 import Product from '@/lib/db/models/Product'
 import Order from '@/lib/db/models/Order'
 import Affiliate from '@/lib/db/models/Affiliate'
+import { getSiteSettings } from '@/lib/db/queries/settings'
+import { checkRateLimit, recordRequest, getClientIp } from '@/lib/rate-limit'
 
 interface CheckoutItem {
   sku: string
@@ -22,12 +24,26 @@ interface CheckoutBody {
 
 function generateReference(): string {
   const timestamp = Date.now().toString(36).toUpperCase()
-  const random = crypto.randomUUID().slice(0, 8).toUpperCase()
+  const random = crypto.randomUUID().replace(/-/g, '').slice(0, 16).toUpperCase()
   return `SC-${timestamp}-${random}`
 }
 
 export async function POST(request: NextRequest) {
+  const ip = getClientIp(request)
+
+  if (checkRateLimit(`checkout:${ip}`, 10, 60_000)) {
+    return NextResponse.json({ error: 'Too many requests. Please try again later.' }, { status: 429 })
+  }
+
   try {
+    const { isMaintenanceMode } = await getSiteSettings()
+    if (isMaintenanceMode) {
+      return NextResponse.json(
+        { error: 'The store is temporarily closed for maintenance' },
+        { status: 503 }
+      )
+    }
+
     await connectDb()
 
     const body = (await request.json()) as CheckoutBody
@@ -191,5 +207,7 @@ export async function POST(request: NextRequest) {
   } catch (error) {
     console.error('Checkout initiate error', error)
     return NextResponse.json({ error: 'Internal server error' }, { status: 500 })
+  } finally {
+    recordRequest(`checkout:${ip}`)
   }
 }

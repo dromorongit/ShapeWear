@@ -1,8 +1,9 @@
 import { MetadataRoute } from 'next'
 import { getProductSlugs } from '@/lib/db/queries/products'
+import { SITE_URL } from '@/lib/constants'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const baseUrl = 'https://shapewearcloset.com'
+  const baseUrl = SITE_URL
 
   const staticRoutes: MetadataRoute.Sitemap = [
     { url: baseUrl, changeFrequency: 'daily', priority: 1 },

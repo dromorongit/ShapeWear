@@ -12,7 +12,7 @@ import {
   getRelatedProducts,
   getAllActiveProducts,
 } from '@/lib/db/queries/products'
-import { BUSINESS_NAME } from '@/lib/constants'
+import { BUSINESS_NAME, SITE_URL } from '@/lib/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
 
 export const revalidate = 3600
@@ -33,7 +33,7 @@ export async function generateMetadata({ params }: { params: { slug: string } })
 
   const title = `${product.name} | ${BUSINESS_NAME}`
   const description = product.shortDescription
-  const imageUrl = product.mainImage.startsWith('http') ? product.mainImage : `https://shapewearcloset.com${product.mainImage}`
+  const imageUrl = product.mainImage.startsWith('http') ? product.mainImage : `${SITE_URL}${product.mainImage}`
 
   return {
     title,
@@ -166,7 +166,7 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
             '@type': 'Product',
             name: product.name,
             description: product.description,
-            image: product.mainImage.startsWith('http') ? product.mainImage : `https://shapewearcloset.com${product.mainImage}`,
+            image: product.mainImage.startsWith('http') ? product.mainImage : `${SITE_URL}${product.mainImage}`,
             offers: {
               '@type': 'Offer',
               price: product.salePrice ?? product.price,
@@ -176,7 +176,7 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
                 : product.stockStatus === 'low-stock'
                   ? 'https://schema.org/LimitedAvailability'
                   : 'https://schema.org/InStock',
-              url: `https://shapewearcloset.com/products/${product.slug}`,
+              url: `${SITE_URL}/products/${product.slug}`,
             },
           }),
         }}

@@ -4,32 +4,15 @@ import mongoose from 'mongoose'
 import { connectDb } from '@/lib/db/connect'
 import Review from '@/lib/db/models/Review'
 import Product from '@/lib/db/models/Product'
+import { checkRateLimit, recordRequest, getClientIp } from '@/lib/rate-limit'
 
 const RATE_LIMIT_WINDOW_MS = 60_000
 const RATE_LIMIT_MAX = 5
 
-const submissionTimestamps = new Map<string, number[]>()
-
-function getClientIp(request: NextRequest): string {
-  const forwarded = request.headers.get('x-forwarded-for')
-  if (forwarded) {
-    return forwarded.split(',')[0].trim()
-  }
-  return request.headers.get('x-real-ip') || 'unknown'
-}
-
-function isRateLimited(ip: string): boolean {
-  const now = Date.now()
-  const timestamps = submissionTimestamps.get(ip) || []
-  const recent = timestamps.filter((t) => now - t < RATE_LIMIT_WINDOW_MS)
-  submissionTimestamps.set(ip, recent)
-  return recent.length >= RATE_LIMIT_MAX
-}
-
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request)
 
-  if (isRateLimited(ip)) {
+  if (checkRateLimit(`reviews:${ip}`, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS)) {
     return NextResponse.json({ error: 'Too many submissions. Please try again later.' }, { status: 429 })
   }
 
@@ -95,9 +78,7 @@ export async function POST(request: NextRequest) {
     status: 'pending',
   })
 
-  const timestamps = submissionTimestamps.get(ip) || []
-  timestamps.push(Date.now())
-  submissionTimestamps.set(ip, timestamps)
+  recordRequest(`reviews:${ip}`)
 
   return NextResponse.json({ received: true }, { status: 201 })
 }
