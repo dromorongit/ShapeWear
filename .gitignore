@@ -22,6 +22,10 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
+# stray build/audit logs
+build_before.log
+*.log.tmp
+
 # local env files
 .env*.local
 .env
