@@ -1,12 +1,20 @@
 import type { NextRequest } from 'next/server'
+import { LRUCache } from 'lru-cache'
 
-const windows = new Map<string, number[]>()
+const windows = new LRUCache<string, number[]>({
+  max: 5000,
+  ttl: 3_600_000,
+})
 
 export function checkRateLimit(key: string, maxRequests: number, windowMs: number): boolean {
   const now = Date.now()
   const timestamps = windows.get(key) || []
   const recent = timestamps.filter((t) => now - t < windowMs)
-  windows.set(key, recent)
+  if (recent.length === 0) {
+    windows.delete(key)
+  } else {
+    windows.set(key, recent)
+  }
   return recent.length >= maxRequests
 }
 

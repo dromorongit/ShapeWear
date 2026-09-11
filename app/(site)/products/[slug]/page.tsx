@@ -10,7 +10,6 @@ import {
   getProductBySlug,
   getProductSlugs,
   getRelatedProducts,
-  getAllActiveProducts,
 } from '@/lib/db/queries/products'
 import { BUSINESS_NAME, SITE_URL } from '@/lib/constants'
 import { formatCurrency } from '@/lib/formatCurrency'
@@ -65,10 +64,7 @@ const ProductPage = async ({ params }: { params: { slug: string } }) => {
   let relatedProducts = await getRelatedProducts(product.category, product.slug, 4)
 
   if (relatedProducts.length < 3) {
-    const all = await getAllActiveProducts()
-    relatedProducts = all
-      .filter((p) => p.id !== product.id)
-      .slice(0, 4)
+    relatedProducts = await getRelatedProducts(undefined, product.slug, 4)
   }
 
   return (

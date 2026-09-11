@@ -4,6 +4,7 @@ import { connectDb } from '@/lib/db/connect'
 import Affiliate from '@/lib/db/models/Affiliate'
 import AffiliatePayout from '@/lib/db/models/AffiliatePayout'
 import { requireAdmin } from '@/lib/admin'
+import { getPagination } from '@/lib/pagination'
 
 export async function GET(
   request: NextRequest,
@@ -13,19 +14,31 @@ export async function GET(
   if (auth) return auth
 
   await connectDb()
+  const { page, limit, skip } = getPagination(request, { defaultLimit: 50, maxLimit: 100 })
 
-  const payouts = await AffiliatePayout.find({ affiliateId: params.id })
-    .lean()
-    .sort({ paidAt: -1 })
-    .exec()
+  const [payouts, totalCount] = await Promise.all([
+    AffiliatePayout.find({ affiliateId: params.id })
+      .lean()
+      .sort({ paidAt: -1 })
+      .limit(limit)
+      .skip(skip)
+      .exec(),
+    AffiliatePayout.countDocuments({ affiliateId: params.id }),
+  ])
 
-  return NextResponse.json(
-    payouts.map((p) => ({
+  return NextResponse.json({
+    data: payouts.map((p) => ({
       ...p,
       id: p._id.toString(),
       affiliateId: p.affiliateId.toString(),
-    }))
-  )
+    })),
+    meta: {
+      page,
+      limit,
+      totalCount,
+      totalPages: Math.max(1, Math.ceil(totalCount / limit)),
+    },
+  })
 }
 
 export async function POST(

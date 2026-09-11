@@ -119,7 +119,7 @@ export async function getFeaturedProducts(limit = 8): Promise<ProductCardData[]>
   return docs.map(toProductCard)
 }
 
-export async function getAllActiveProducts(category?: string): Promise<ProductCardData[]> {
+export async function getAllActiveProducts(category?: string, limit = 200): Promise<ProductCardData[]> {
   await connectDb()
   const filter: Record<string, unknown> = { isActive: true }
   if (category) {
@@ -128,6 +128,7 @@ export async function getAllActiveProducts(category?: string): Promise<ProductCa
   const docs = (await Product.find(filter)
     .lean()
     .select(CARD_PROJECTION)
+    .limit(limit)
     .exec()) as unknown as RawProductCard[]
   return docs.map(toProductCard)
 }
@@ -141,12 +142,19 @@ export async function getProductBySlug(slug: string): Promise<MockProduct | null
 }
 
 export async function getRelatedProducts(
-  category: string,
-  excludeSlug: string,
+  category?: string,
+  excludeSlug?: string,
   limit = 4
 ): Promise<ProductCardData[]> {
   await connectDb()
-  const docs = (await Product.find({ category, isActive: true, slug: { $ne: excludeSlug } })
+  const filter: Record<string, unknown> = { isActive: true }
+  if (category) {
+    filter.category = category
+  }
+  if (excludeSlug) {
+    filter.slug = { $ne: excludeSlug }
+  }
+  const docs = (await Product.find(filter)
     .lean()
     .select(CARD_PROJECTION)
     .limit(limit)
@@ -154,11 +162,12 @@ export async function getRelatedProducts(
   return docs.map(toProductCard)
 }
 
-export async function getProductSlugs(): Promise<string[]> {
+export async function getProductSlugs(limit = 5000): Promise<string[]> {
   await connectDb()
   const docs = (await Product.find({ isActive: true })
     .lean()
     .select('slug')
+    .limit(limit)
     .exec()) as unknown as RawProductSlug[]
   return docs.map((doc) => doc.slug)
 }
@@ -172,11 +181,12 @@ export async function getProductsByCategory(category: string): Promise<ProductCa
   return docs.map(toProductCard)
 }
 
-export async function getAllCategories(): Promise<{ id: string; name: string }[]> {
+export async function getAllCategories(limit = 5000): Promise<{ id: string; name: string }[]> {
   await connectDb()
   const docs = (await Category.find({})
     .lean()
     .select('name')
+    .limit(limit)
     .exec()) as unknown as { _id: { toString(): string }; name: string }[]
   return docs.map((c) => ({ id: c._id.toString(), name: c.name }))
 }

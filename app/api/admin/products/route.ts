@@ -3,25 +3,39 @@ import type { NextRequest } from 'next/server'
 import { connectDb } from '@/lib/db/connect'
 import Product from '@/lib/db/models/Product'
 import { requireAdmin } from '@/lib/admin'
+import { getPagination } from '@/lib/pagination'
 
 export async function GET(request: NextRequest) {
   const auth = await requireAdmin(request)
   if (auth) return auth
 
   await connectDb()
-  const products = await Product.find({})
-    .lean()
-    .select(
-      'slug name mainImage price salePrice stock stockStatus variants isActive isFeatured category tags description shortDescription additionalImages shapes sizes'
-    )
-    .exec()
+  const { page, limit, skip } = getPagination(request, { defaultLimit: 50, maxLimit: 200 })
 
-  return NextResponse.json(
-    products.map((p) => ({
+  const [products, totalCount] = await Promise.all([
+    Product.find({})
+      .lean()
+      .select(
+        'slug name mainImage price salePrice stock stockStatus variants isActive isFeatured category tags description shortDescription additionalImages shapes sizes'
+      )
+      .limit(limit)
+      .skip(skip)
+      .exec(),
+    Product.countDocuments({}),
+  ])
+
+  return NextResponse.json({
+    data: products.map((p) => ({
       ...p,
       id: p._id.toString(),
-    }))
-  )
+    })),
+    meta: {
+      page,
+      limit,
+      totalCount,
+      totalPages: Math.max(1, Math.ceil(totalCount / limit)),
+    },
+  })
 }
 
 export async function POST(request: NextRequest) {
