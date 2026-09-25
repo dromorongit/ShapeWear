@@ -28,6 +28,8 @@ function generateReference(): string {
   return `SC-${timestamp}-${random}`
 }
 
+export const dynamic = 'force-dynamic'
+
 export async function POST(request: NextRequest) {
   const ip = getClientIp(request)
 

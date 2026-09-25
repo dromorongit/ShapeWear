@@ -6,6 +6,8 @@ import { getSiteSettings } from '@/lib/db/queries/settings'
 import { requireAdmin } from '@/lib/admin'
 import { revalidatePath } from 'next/cache'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET(request: NextRequest) {
   const auth = await requireAdmin(request)
   if (auth) return auth

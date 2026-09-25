@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server'
 import { connectDb } from '@/lib/db/connect'
 import Admin from '@/lib/db/models/Admin'
 
+export const dynamic = 'force-dynamic'
+
 export async function GET() {
   try {
     await connectDb()

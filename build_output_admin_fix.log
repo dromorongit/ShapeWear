@@ -1,0 +1,104 @@
+npm notice run shapewear-closet@0.1.0 build
+npm notice run next build
+  ▲ Next.js 14.2.35
+  - Environments: .env.local
+
+   Creating an optimized production build ...
+ ⚠ Compiled with warnings
+
+./node_modules/jose/dist/webapi/lib/deflate.js
+A Node.js API is used (CompressionStream at line: 18) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/jose/dist/webapi/lib/deflate.js
+./node_modules/jose/dist/webapi/lib/jwe_decrypt.js
+./node_modules/jose/dist/webapi/jwt/decrypt.js
+./node_modules/jose/dist/webapi/index.js
+./lib/auth.ts
+
+./node_modules/jose/dist/webapi/lib/deflate.js
+A Node.js API is used (DecompressionStream at line: 34) which is not supported in the Edge Runtime.
+Learn more: https://nextjs.org/docs/api-reference/edge-runtime
+
+Import trace for requested module:
+./node_modules/jose/dist/webapi/lib/deflate.js
+./node_modules/jose/dist/webapi/lib/jwe_decrypt.js
+./node_modules/jose/dist/webapi/jwt/decrypt.js
+./node_modules/jose/dist/webapi/index.js
+./lib/auth.ts
+
+ ✓ Compiled successfully
+   Linting and checking validity of types ...
+   Collecting page data ...
+   Generating static pages (0/39) ...
+   Generating static pages (9/39) 
+   Generating static pages (19/39) 
+   Generating static pages (29/39) 
+ ✓ Generating static pages (39/39)
+   Finalizing page optimization ...
+   Collecting build traces ...
+
+Route (app)                              Size     First Load JS
+┌ ƒ /                                    586 B           102 kB
+├ ○ /_not-found                          152 B          87.4 kB
+├ ƒ /about                               580 B          96.5 kB
+├ ƒ /admin/affiliates                    1.73 kB        97.7 kB
+├ ƒ /admin/affiliates/[id]               2.94 kB        98.9 kB
+├ ○ /admin/categories                    1.99 kB        89.3 kB
+├ ƒ /admin/dashboard                     763 B            88 kB
+├ ○ /admin/login                         1.73 kB        97.7 kB
+├ ƒ /admin/products                      2.21 kB         103 kB
+├ ƒ /admin/products/[id]/edit            137 B          97.6 kB
+├ ○ /admin/products/new                  139 B          97.6 kB
+├ ƒ /admin/register                      1.64 kB        88.9 kB
+├ ƒ /admin/reviews                       1.65 kB        88.9 kB
+├ ○ /admin/settings                      2.34 kB        89.6 kB
+├ ƒ /affiliate/dashboard                 596 B          87.9 kB
+├ ○ /affiliate/login                     1.66 kB        88.9 kB
+├ ○ /affiliate/register                  2.02 kB        89.3 kB
+├ ƒ /api/admin/affiliates                0 B                0 B
+├ ƒ /api/admin/affiliates/[id]           0 B                0 B
+├ ƒ /api/admin/affiliates/[id]/payouts   0 B                0 B
+├ ƒ /api/admin/auth/login                0 B                0 B
+├ ƒ /api/admin/auth/logout               0 B                0 B
+├ ƒ /api/admin/auth/register             0 B                0 B
+├ ƒ /api/admin/auth/status               0 B                0 B
+├ ƒ /api/admin/categories                0 B                0 B
+├ ƒ /api/admin/categories/[id]           0 B                0 B
+├ ƒ /api/admin/cloudinary-signature      0 B                0 B
+├ ƒ /api/admin/products                  0 B                0 B
+├ ƒ /api/admin/products/[id]             0 B                0 B
+├ ƒ /api/admin/reviews                   0 B                0 B
+├ ƒ /api/admin/reviews/[id]              0 B                0 B
+├ ƒ /api/admin/settings                  0 B                0 B
+├ ƒ /api/affiliate/auth/login            0 B                0 B
+├ ƒ /api/affiliate/auth/logout           0 B                0 B
+├ ƒ /api/affiliate/auth/register         0 B                0 B
+├ ƒ /api/checkout/initiate               0 B                0 B
+├ ƒ /api/checkout/status/[reference]     0 B                0 B
+├ ƒ /api/reviews                         0 B                0 B
+├ ƒ /api/search                          0 B                0 B
+├ ƒ /api/track/click                     0 B                0 B
+├ ƒ /api/webhooks/paystack               0 B                0 B
+├ ƒ /cart                                2.27 kB         103 kB
+├ ƒ /checkout                            3.59 kB         105 kB
+├ ƒ /contact                             580 B          96.5 kB
+├ ƒ /order-confirmation                  4.29 kB         105 kB
+├ ● /products/[slug]                     6.53 kB         108 kB
+├ ○ /robots.txt                          0 B                0 B
+├ ƒ /search                              188 B           101 kB
+├ ƒ /shop                                188 B           101 kB
+└ ƒ /sitemap.xml                         0 B                0 B
++ First Load JS shared by all            87.3 kB
+  ├ chunks/117-0557995713850414.js       31.7 kB
+  ├ chunks/fd9d1056-ceeab0d360c7c490.js  53.6 kB
+  └ other shared chunks (total)          1.89 kB
+
+
+ƒ Middleware                             31.9 kB
+
+○  (Static)   prerendered as static content
+●  (SSG)      prerendered as static HTML (uses getStaticProps)
+ƒ  (Dynamic)  server-rendered on demand
+
