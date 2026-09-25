@@ -22,6 +22,8 @@ const baseMetadata: Metadata = {
   },
 }
 
+export const revalidate = 3600
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getCachedSiteSettings()
   if (settings.isMaintenanceMode) {

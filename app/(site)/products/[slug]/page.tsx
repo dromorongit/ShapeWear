@@ -8,7 +8,6 @@ import ReviewsSection from '@/components/product/ReviewsSection'
 import ProductCard from '@/components/product/ProductCard'
 import {
   getProductBySlug,
-  getProductSlugs,
   getRelatedProducts,
 } from '@/lib/db/queries/products'
 import { BUSINESS_NAME, SITE_URL } from '@/lib/constants'
@@ -16,9 +15,10 @@ import { formatCurrency } from '@/lib/formatCurrency'
 
 export const revalidate = 3600
 
+export const dynamicParams = true
+
 export async function generateStaticParams() {
-  const slugs = await getProductSlugs()
-  return slugs.map((slug) => ({ slug }))
+  return []
 }
 
 export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
